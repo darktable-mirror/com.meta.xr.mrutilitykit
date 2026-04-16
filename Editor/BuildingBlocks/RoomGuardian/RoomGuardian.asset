@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35c4ad19f06c67e44a2d7ba8d05f31b7, type: 3}
   m_Name: RoomGuardian
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   id: 715d6e5e-2d15-475d-9b2b-43ce3eca2f3d
   version: 1
   blockName: Room Guardian
@@ -20,7 +20,8 @@ MonoBehaviour:
     array:
     - name: Scene
     - name: MRUK
-  thumbnail: {fileID: 2800000, guid: a7f4c54f9844aef41a0f9c29c538e084, type: 3}
+  thumbnail: {fileID: 0}
+  remoteThumbnailContentId: 25491457330542284
   order: 5
   prefab: {fileID: 5456522116536683071, guid: 5d3c52234cffb412595fe970f51c6342, type: 3}
   externalBlockDependencies: []
@@ -28,6 +29,6 @@ MonoBehaviour:
   - d4413f4f-542f-451f-92ee-4801f27d676a
   packageDependencies: []
   isSingleton: 1
-  usageInstructions: 
+  usageInstructions:
   featureDocumentationName: Room Guardian
   featureDocumentationUrl: https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-features#roomguardian

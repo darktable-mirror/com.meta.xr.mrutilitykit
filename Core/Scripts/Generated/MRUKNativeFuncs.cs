@@ -513,13 +513,10 @@ namespace Meta.XR.MRUtilityKit
         [return: MarshalAs(UnmanagedType.U1)]
         internal delegate bool GetWorldLockOffsetDelegate(ref Pose offset);
 
-        /// Add two vectors together. This is implemented as a test to ensure the native shared
-        /// library is working correctly.
-        ///
-        /// @param[in] a The first vector.
-        /// @param[in] b The second vector.
-        /// @return The sum of the two vectors.
-        internal delegate Vector3 AddVectorsDelegate(Vector3 a, Vector3 b);
+        /// Clear saved room and floor anchor poses from local storage.
+        /// This will remove all persisted pose data that was saved for world locking.
+        internal delegate void ClearSavedRoomPosesDelegate();
+
 
         /// Triangulate a polygon with holes, any winding order works. The first polyline defines the main
         /// polygon. Following polylines define holes. This function will allocate memory for the vertices
@@ -746,7 +743,7 @@ namespace Meta.XR.MRUtilityKit
         internal static SetCustomWorldLockAnchorDelegate SetCustomWorldLockAnchor;
         internal static ErasePersistedWorldLockAnchorDelegate ErasePersistedWorldLockAnchor;
         internal static GetWorldLockOffsetDelegate GetWorldLockOffset;
-        internal static AddVectorsDelegate AddVectors;
+        internal static ClearSavedRoomPosesDelegate ClearSavedRoomPoses;
         internal static TriangulatePolygonDelegate TriangulatePolygon;
         internal static FreeMeshDelegate FreeMesh;
         internal static ComputeMeshSegmentationDelegate ComputeMeshSegmentation;
@@ -809,7 +806,7 @@ namespace Meta.XR.MRUtilityKit
             SetCustomWorldLockAnchor = MRUKNative.LoadFunction<SetCustomWorldLockAnchorDelegate>("SetCustomWorldLockAnchor");
             ErasePersistedWorldLockAnchor = MRUKNative.LoadFunction<ErasePersistedWorldLockAnchorDelegate>("ErasePersistedWorldLockAnchor");
             GetWorldLockOffset = MRUKNative.LoadFunction<GetWorldLockOffsetDelegate>("GetWorldLockOffset");
-            AddVectors = MRUKNative.LoadFunction<AddVectorsDelegate>("AddVectors");
+            ClearSavedRoomPoses = MRUKNative.LoadFunction<ClearSavedRoomPosesDelegate>("ClearSavedRoomPoses");
             TriangulatePolygon = MRUKNative.LoadFunction<TriangulatePolygonDelegate>("TriangulatePolygon");
             FreeMesh = MRUKNative.LoadFunction<FreeMeshDelegate>("FreeMesh");
             ComputeMeshSegmentation = MRUKNative.LoadFunction<ComputeMeshSegmentationDelegate>("ComputeMeshSegmentation");
@@ -873,7 +870,7 @@ namespace Meta.XR.MRUtilityKit
             SetCustomWorldLockAnchor = null;
             ErasePersistedWorldLockAnchor = null;
             GetWorldLockOffset = null;
-            AddVectors = null;
+            ClearSavedRoomPoses = null;
             TriangulatePolygon = null;
             FreeMesh = null;
             ComputeMeshSegmentation = null;

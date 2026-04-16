@@ -93,7 +93,7 @@ namespace Meta.XR.MRUtilityKit
             polygons[0].points = vertices.ToArray();
             if (holes != null)
             {
-                for (int i = 0; i < holes.Count; ++i)
+                for (int i = 0; i < holes.Count; i++)
                 {
                     polygons[i + 1].numPoints = (uint)holes[i].Count;
                     polygons[i + 1].points = holes[i].ToArray();
@@ -102,12 +102,12 @@ namespace Meta.XR.MRUtilityKit
 
             using var mesh = new Mesh2fDisposer(MRUKNativeFuncs.TriangulatePolygon(polygons, (uint)numPolygons));
             outVertices = new Vector2[(int)mesh.Mesh.numVertices];
-            for (uint i = 0; i < mesh.Mesh.numVertices; ++i)
+            for (uint i = 0; i < mesh.Mesh.numVertices; i++)
             {
                 outVertices[i] = mesh.Mesh.vertices[i];
             }
             outIndices = new int[(int)mesh.Mesh.numIndices];
-            for (uint i = 0; i < mesh.Mesh.numIndices; ++i)
+            for (uint i = 0; i < mesh.Mesh.numIndices; i++)
             {
                 outIndices[i] = (int)mesh.Mesh.indices[i];
             }

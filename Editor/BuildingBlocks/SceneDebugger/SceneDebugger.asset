@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35c4ad19f06c67e44a2d7ba8d05f31b7, type: 3}
   m_Name: SceneDebugger
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   id: 8ac24146-90e9-4802-8a61-9d72ceaa2450
   version: 1
   blockName: Scene Debugger
@@ -20,7 +20,8 @@ MonoBehaviour:
     array:
     - name: Scene
     - name: MRUK
-  thumbnail: {fileID: 2800000, guid: 38f69350382be7f4887ee22dcc0d4b2c, type: 3}
+  thumbnail: {fileID: 0}
+  remoteThumbnailContentId: 33960916053499156
   order: 5
   prefab: {fileID: 8477560934378440801, guid: 61049dfb4690be642a843757d529ca97, type: 3}
   externalBlockDependencies: []
@@ -31,6 +32,6 @@ MonoBehaviour:
   - 5817f7c0-f2a5-45f9-a5ca-64264e0166e8
   packageDependencies: []
   isSingleton: 1
-  usageInstructions: 
+  usageInstructions:
   featureDocumentationName: Scene Debugger
   featureDocumentationUrl: https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-features#scenedebugger

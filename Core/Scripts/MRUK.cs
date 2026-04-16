@@ -882,7 +882,7 @@ namespace Meta.XR.MRUtilityKit
 
             var unifiedEvent =
                 new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.MrukSetCustomWorldLockAnchor);
-            unifiedEvent.SetMetadata("result", isSetAnchorSuccessful);
+            unifiedEvent.result = isSetAnchorSuccessful ? OVRPlugin.UnifiedEventResult.SUCCESS : OVRPlugin.UnifiedEventResult.FAIL;
             unifiedEvent.SendMRUKEvent();
         }
 
@@ -1052,7 +1052,7 @@ namespace Meta.XR.MRUtilityKit
             var result = await LoadSceneFromDeviceSharedLib(requestSceneCaptureIfNoDataFound, removeMissingRooms, sceneModel, sharedRoomsData);
             var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.LoadSceneFromDevice);
             unifiedEvent.SetMetadata(TelemetryConstants.AnnotationType.NumRooms, Rooms.Count);
-            unifiedEvent.SetMetadata("result", result == LoadDeviceResult.Success);
+            unifiedEvent.result = result == LoadDeviceResult.Success ? OVRPlugin.UnifiedEventResult.SUCCESS : OVRPlugin.UnifiedEventResult.FAIL;
             unifiedEvent.SendMRUKEvent();
             return result;
         }
@@ -1096,7 +1096,7 @@ namespace Meta.XR.MRUtilityKit
             var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.LoadSceneFromPrefab);
             unifiedEvent.SetMetadata(TelemetryConstants.AnnotationType.SceneName, scenePrefab.name);
             unifiedEvent.SetMetadata(TelemetryConstants.AnnotationType.NumRooms, Rooms.Count);
-            unifiedEvent.SetMetadata("result", result == LoadDeviceResult.Success);
+            unifiedEvent.result = result == LoadDeviceResult.Success ? OVRPlugin.UnifiedEventResult.SUCCESS : OVRPlugin.UnifiedEventResult.FAIL;
             unifiedEvent.SendMRUKEvent();
             return result;
         }
@@ -1140,7 +1140,7 @@ namespace Meta.XR.MRUtilityKit
             var result = await LoadSceneFromJsonSharedLib(jsonString, removeMissingRooms);
             var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.LoadSceneFromJson);
             unifiedEvent.SetMetadata(TelemetryConstants.AnnotationType.NumRooms, Rooms.Count);
-            unifiedEvent.SetMetadata("result", result == LoadDeviceResult.Success);
+            unifiedEvent.result = result == LoadDeviceResult.Success ? OVRPlugin.UnifiedEventResult.SUCCESS : OVRPlugin.UnifiedEventResult.FAIL;
             unifiedEvent.SendMRUKEvent();
             return result;
         }

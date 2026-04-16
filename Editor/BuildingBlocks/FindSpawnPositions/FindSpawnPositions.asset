@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 020b12e8a977ecb4a96e9066190a2766, type: 3}
   m_Name: FindSpawnPositions
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   id: 93762ef0-9738-45f4-bb87-bdb9a0acb994
   version: 1
   blockName: Find Spawn Positions
@@ -21,7 +21,8 @@ MonoBehaviour:
     - name: Scene
     - name: Helper
     - name: MRUK
-  thumbnail: {fileID: 2800000, guid: b5c5be7e0b904844aa95ba4b9a80d254, type: 3}
+  thumbnail: {fileID: 0}
+  remoteThumbnailContentId: 25658583803782041
   order: 5
   prefab: {fileID: 924406752040691048, guid: 2c79091165ddb24409b0a91f0d71bba0, type: 3}
   externalBlockDependencies: []
@@ -29,6 +30,6 @@ MonoBehaviour:
   - d4413f4f-542f-451f-92ee-4801f27d676a
   packageDependencies: []
   isSingleton: 0
-  usageInstructions: 
+  usageInstructions:
   featureDocumentationName: Find Spawn Positions
   featureDocumentationUrl: https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-features#findspawnpositions

@@ -20,11 +20,11 @@
 
 using System;
 using System.Collections;
+using System.Threading.Tasks;
 using Meta.XR.EnvironmentDepth;
 using Meta.XR.MRUtilityKit;
 using UnityEngine;
 using UnityEngine.Android;
-using UnityEngine.Assertions;
 #if UNITY_EDITOR
 using Meta.XR.Telemetry;
 #endif
@@ -34,8 +34,6 @@ namespace Meta.XR
     /// <summary>
     /// This component uses Depth API to provide raycasting functionality against the physical environment.<br/>
     /// Enabling this component adds the additional performance cost to the cost of using Depth API, so consider enabling it only when you need the raycasting functionality.<br/>
-    /// This component automatically adds and enables the <see cref="EnvironmentDepthManager"/>.
-    /// Consider disabling the <see cref="EnvironmentDepthManager"/> manually after disabling the <see cref="EnvironmentRaycastManager"/> to save performance.
     /// </summary>
     public class EnvironmentRaycastManager : MonoBehaviour
     {
@@ -63,21 +61,36 @@ namespace Meta.XR
 
         private void Awake()
         {
-            Assert.IsNull(_instance, $"More than one {nameof(EnvironmentRaycastManager)} component. Only one instance is allowed at a time. New instance: {name}");
             if (!IsSupported)
             {
 #if UNITY_EDITOR
-                IssueTracker.TrackError(IssueTracker.SDK.MRUK, "mruk-environment-raycast-not-supported",
+                if (OVRPlugin.initialized)// We're in Link or XRSim
+                {
+                    IssueTracker.TrackError(IssueTracker.SDK.MRUK, "mruk-environment-raycast-not-supported",
                     $"{nameof(EnvironmentRaycastManager)} is not supported. Please check the '{nameof(EnvironmentRaycastManager)}.{nameof(IsSupported)}' property before enabling this component.\n" +
-                    "When running in Editor over Meta Quest Link, please enable 'Settings > Beta > Spatial Data over Meta Quest Link'.");
+                    "When running in Editor over Meta Quest Link, please enable 'Settings > Developer > Spatial Data over Meta Quest Link'.");
+                }
 #else
                 Debug.LogError($"{nameof(EnvironmentRaycastManager)} is not supported. Please check the '{nameof(EnvironmentRaycastManager)}.{nameof(IsSupported)}' property before enabling this component.");
 #endif
             }
-            _instance = this;
+            if (_instance == null)
+            {
+                _instance = this;
+            }
+            else
+            {
+                Debug.LogError($"More than one {nameof(EnvironmentRaycastManager)} component. Only one instance is allowed at a time. New instance: {name} ({GetInstanceID()})", this);
+            }
         }
 
-        private void OnDestroy() => _instance = null;
+        private void OnDestroy()
+        {
+            if (_instance == this)
+            {
+                _instance = null;
+            }
+        }
 
         private void Start()
         {
@@ -91,7 +104,7 @@ namespace Meta.XR
 
         private void SetProviderEnabled(bool isEnabled)
         {
-            if (IsSupported)
+            if (_instance == this && IsSupported)
             {
                 _provider.SetEnabled(isEnabled, this);
             }
@@ -306,15 +319,13 @@ namespace Meta.XR
 
         private class EnvironmentRaycastProviderMeta : IEnvironmentRaycastProvider
         {
-            private unsafe readonly OVRPlugin.RaycastFilterHeader*[] _filters = new OVRPlugin.RaycastFilterHeader*[1];
             private bool _isEnabled;
             private bool _isCreating;
-            private ulong? _handle;
             private int _lastTrackingSpaceUpdateFrame = -1;
             private Matrix4x4 _worldToTrackingMatrix = Matrix4x4.identity;
             private Matrix4x4 _trackingToWorldMatrix = Matrix4x4.identity;
 
-            public bool IsReady => _handle.HasValue;
+            public bool IsReady => MRUKNativeFuncs.EnvironmentRaycasterStatus != null && MRUKNativeFuncs.EnvironmentRaycasterStatus() == MRUKNativeFuncs.MrukEnvironmentRaycasterStatus.Ready;
 
             bool IEnvironmentRaycastProvider.IsSupported => OVRPlugin.GetEnvironmentRaycastSupported(out bool isSupported).IsSuccess() && isSupported;
 
@@ -336,10 +347,10 @@ namespace Meta.XR
                             raycastManager.StartCoroutine(WaitForPermissionsAndCreateHandle());
                         }
                     }
-                    else if (_handle.HasValue)
+                    else if (IsReady)
                     {
-                        DestroyEnvironmentRaycaster(_handle.Value);
-                        _handle = null;
+                        MRUKLogRaycast("Disabled while was IsReady");
+                        DestroyEnvironmentRaycaster();
                     }
                 }
             }
@@ -355,44 +366,39 @@ namespace Meta.XR
 
             private async void CreateHandle()
             {
-                var result = OVRPlugin.CreateEnvironmentRaycasterAsync(out ulong future);
-                if (!result.IsSuccess())
+                var result = MRUKNativeFuncs.CreateEnvironmentRaycaster();
+                if (result != MRUKNativeFuncs.MrukResult.Success)
                 {
-                    Debug.LogError($"OVRPlugin.CreateEnvironmentRaycasterAsync() failed with result {result}.");
+                    Debug.LogError($"CreateEnvironmentRaycaster failed with result {result}");
                     return;
                 }
 
                 _isCreating = true;
-                result = await OVRFuture.When(future);
+                while (MRUKNativeFuncs.EnvironmentRaycasterStatus() == MRUKNativeFuncs.MrukEnvironmentRaycasterStatus.Creating)
+                {
+                    await Task.Yield();
+                }
                 _isCreating = false;
-
-                if (!result.IsSuccess())
+                if (MRUKNativeFuncs.EnvironmentRaycasterStatus() != MRUKNativeFuncs.MrukEnvironmentRaycasterStatus.Ready)
                 {
-                    Debug.LogError($"OVRPlugin.CreateEnvironmentRaycasterAsync() future failed with result {result}.");
+                    Debug.LogError("CreateEnvironmentRaycaster failed");
                     return;
                 }
-
-                result = OVRPlugin.CreateEnvironmentRaycasterComplete(future, out var completion);
-                if (!result.IsSuccess())
-                {
-                    Debug.LogError($"OVRPlugin.CreateEnvironmentRaycasterComplete() failed with result {result}.");
-                    return;
-                }
-
-                var handle = completion.EnvironmentRaycaster;
                 if (_isEnabled)
                 {
-                    _handle = handle;
+                    MRUKLogRaycast("CreateEnvironmentRaycaster succeeded");
                 }
                 else
                 {
-                    DestroyEnvironmentRaycaster(handle);
+                    MRUKLogRaycast("Disabled while CreateEnvironmentRaycaster");
+                    DestroyEnvironmentRaycaster();
                 }
             }
 
-            private static void DestroyEnvironmentRaycaster(ulong handle)
+            private static void DestroyEnvironmentRaycaster()
             {
-                OVRPlugin.DestroyEnvironmentRaycaster(handle); // can fail when the app is quitting, so no need to check the result and log an error
+                MRUKLogRaycast("DestroyEnvironmentRaycaster");
+                MRUKNativeFuncs.DestroyEnvironmentRaycaster();
             }
 
             bool IEnvironmentRaycastProvider.Raycast(Ray ray, out EnvironmentRaycastHit hit, float maxDistance, bool reconstructNormal, bool allowOccludedRayOrigin)
@@ -409,57 +415,62 @@ namespace Meta.XR
                     }
                 }
 
-                Assert.IsTrue(_handle.HasValue);
-                hit = new EnvironmentRaycastHit { status = EnvironmentRaycastHitStatus.NoHit };
+                hit = PerformEnvironmentRaycast(ray.origin, ray.direction, maxDistance, _worldToTrackingMatrix, _trackingToWorldMatrix);
+                return hit.status == EnvironmentRaycastHitStatus.Hit;
+            }
 
-                unsafe
-                {
-                    var distanceFilter = new OVRPlugin.RaycastDistanceFilter
-                    {
-                        Type = OVRPlugin.RaycastFilterType.Distance,
-                        MaxDistance = maxDistance
-                    };
-
-                    _filters[0] = (OVRPlugin.RaycastFilterHeader*)&distanceFilter;
-                    fixed (OVRPlugin.RaycastFilterHeader** pinnedFiltersPointer = &_filters[0])
-                    {
-                        var getInfo = new OVRPlugin.RaycastHitPointGetInfo
-                        {
-                            StartPoint = _worldToTrackingMatrix.MultiplyPoint3x4(ray.origin).ToFlippedZVector3f(),
-                            Direction = _worldToTrackingMatrix.MultiplyVector(ray.direction).ToFlippedZVector3f(),
-                            NumFilter = (uint)_filters.Length,
-                            Filters = pinnedFiltersPointer
-                        };
-
-                        var result = OVRPlugin.PerformEnvironmentRaycast(_handle.Value, getInfo, out var raycastHit);
-                        if (!result.IsSuccess())
-                        {
-                            return false;
-                        }
-
-                        hit.status = raycastHit.Status switch
-                        {
-                            OVRPlugin.EnvironmentRaycastStatus.EnvironmentRaycastStatus_Hit or OVRPlugin.EnvironmentRaycastStatus.EnvironmentRaycastStatus_InvalidOrientation => EnvironmentRaycastHitStatus.Hit,
-                            OVRPlugin.EnvironmentRaycastStatus.EnvironmentRaycastStatus_NoHit => EnvironmentRaycastHitStatus.NoHit,
-                            OVRPlugin.EnvironmentRaycastStatus.EnvironmentRaycastStatus_HitPointOccluded => EnvironmentRaycastHitStatus.HitPointOccluded,
-                            OVRPlugin.EnvironmentRaycastStatus.EnvironmentRaycastStatus_HitPointOutsideFoV => EnvironmentRaycastHitStatus.HitPointOutsideOfCameraFrustum,
-                            OVRPlugin.EnvironmentRaycastStatus.EnvironmentRaycastStatus_RayOccluded => EnvironmentRaycastHitStatus.RayOccluded,
-                            _ => throw new Exception($"Unknown OVRPlugin.PerformEnvironmentRaycast() status: {raycastHit.Status}.")
-                        };
-
-                        var pose = MRUK.FlipZRotateY180(new Pose(raycastHit.Pose.Position.FromVector3f(), raycastHit.Pose.Orientation.FromQuatf()));
-                        hit.point = _trackingToWorldMatrix.MultiplyPoint3x4(pose.position);
-                        if (raycastHit.Status == OVRPlugin.EnvironmentRaycastStatus.EnvironmentRaycastStatus_Hit)
-                        {
-                            hit.normal = _trackingToWorldMatrix.MultiplyVector(pose.rotation * Vector3.forward);
-                            hit.normalConfidence = 1f;
-                        }
-
-                        return hit.status == EnvironmentRaycastHitStatus.Hit;
-                    }
-                }
+            [System.Diagnostics.Conditional("DEBUG_DEPTH_RAYCAST")]
+            private static void MRUKLogRaycast(string msg)
+            {
+                Debug.Log($"[{Time.frameCount}] MRUKLogRaycast {msg}");
             }
         }
+
+        private static EnvironmentRaycastHit PerformEnvironmentRaycast(Vector3 startPoint, Vector3 direction, float maxDistance, Matrix4x4 worldToTrackingMatrix, Matrix4x4 trackingToWorldMatrix)
+        {
+            MRUKNativeFuncs.MrukEnvironmentRaycastHitPointGetInfo hitPointGetInfo = new();
+            hitPointGetInfo.startPoint = MRUK.FlipZ(worldToTrackingMatrix.MultiplyPoint3x4(startPoint));
+            hitPointGetInfo.direction = MRUK.FlipZ(worldToTrackingMatrix.MultiplyVector(direction));
+            hitPointGetInfo.maxDistance = maxDistance;
+            MRUKNativeFuncs.MrukEnvironmentRaycastHitPoint hitPoint = new();
+            MRUKNativeFuncs.MrukResult result = MRUKNativeFuncs.RaycastEnvironment(ref hitPointGetInfo, ref hitPoint);
+
+            EnvironmentRaycastHit hit = new EnvironmentRaycastHit { status = EnvironmentRaycastHitStatus.NoHit };
+            switch (result)
+            {
+                case MRUKNativeFuncs.MrukResult.ErrorNotReady:
+                    hit.status = EnvironmentRaycastHitStatus.NotReady;
+                    return hit;
+                case MRUKNativeFuncs.MrukResult.ErrorUnsupported:
+                    hit.status = EnvironmentRaycastHitStatus.NotSupported;
+                    return hit;
+                case MRUKNativeFuncs.MrukResult.Success:
+                    break;
+                default:
+                    throw new Exception($"Unknown PerformEnvironmentRaycast() status: {result}.");
+            }
+
+            hit.status = hitPoint.status switch
+            {
+                MRUKNativeFuncs.MrukEnvironmentRaycastStatus.Hit or MRUKNativeFuncs.MrukEnvironmentRaycastStatus.InvalidOrientation => EnvironmentRaycastHitStatus.Hit,
+                MRUKNativeFuncs.MrukEnvironmentRaycastStatus.NoHit => EnvironmentRaycastHitStatus.NoHit,
+                MRUKNativeFuncs.MrukEnvironmentRaycastStatus.HitPointOccluded => EnvironmentRaycastHitStatus.HitPointOccluded,
+                MRUKNativeFuncs.MrukEnvironmentRaycastStatus.HitPointOutsideFov => EnvironmentRaycastHitStatus.HitPointOutsideOfCameraFrustum,
+                MRUKNativeFuncs.MrukEnvironmentRaycastStatus.RayOccluded => EnvironmentRaycastHitStatus.RayOccluded,
+                _ => throw new Exception($"Unknown PerformEnvironmentRaycast() status: {hit.status}.")
+            };
+
+            var pose = MRUK.FlipZRotateY180(new Pose(hitPoint.point, hitPoint.orientation));
+            hit.point = trackingToWorldMatrix.MultiplyPoint3x4(pose.position);
+            if (hitPoint.status == MRUKNativeFuncs.MrukEnvironmentRaycastStatus.Hit)
+            {
+                hit.normal = trackingToWorldMatrix.MultiplyVector(pose.rotation * Vector3.forward);
+                hit.normalConfidence = 1f;
+            }
+
+            return hit;
+        }
+
     }
 
     /// <summary>

@@ -88,7 +88,7 @@ namespace Meta.XR.MRUtilityKit
 
         public static bool SendMRUKEvent(this OVRPlugin.UnifiedEventData eventData)
         {
-            eventData.productType = "mruk";
+            eventData.productType = OVRPlugin.ProductType.Mruk;
             eventData.isEssential = OVRPlugin.Bool.False;
             eventData.SetMetadata("device_os", SystemInfo.operatingSystem);
             eventData.SetMetadata("developer_platform", ApplicationPlatform);

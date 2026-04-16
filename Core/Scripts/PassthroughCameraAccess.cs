@@ -194,10 +194,15 @@ namespace Meta.XR
                 }
 #endif
 
+                if (headset is not (OVRPlugin.SystemHeadset.Meta_Quest_3 or OVRPlugin.SystemHeadset.Meta_Quest_3S))
+                {
+                    return false;
+                }
+
                 using var vrosClass = new AndroidJavaClass("vros.os.VrosBuild");
                 var osVersion = vrosClass.CallStatic<int>("getSdkVersion");
                 const int minSupportedVersion = 74;
-                return (headset is OVRPlugin.SystemHeadset.Meta_Quest_3 or OVRPlugin.SystemHeadset.Meta_Quest_3S) && osVersion >= minSupportedVersion;
+                return osVersion >= minSupportedVersion;
             }
         }
 
@@ -209,37 +214,42 @@ namespace Meta.XR
             }
 
             long timestampMicroseconds = 0;
-#if UNITY_EDITOR && OVR_INTERNAL_CODE
-            unsafe
+#if UNITY_EDITOR
+            if (Application.isEditor)
             {
-                byte* buffer = MRUKNativeFuncs.CameraAcquireLatestCpuImage != null
-                    ? MRUKNativeFuncs.CameraAcquireLatestCpuImage(_currentCameraIndex, ref timestampMicroseconds, ref _timestampNsMonotonic)
-                    : null;
-                if (buffer == null)
+                unsafe
+                {
+                    byte* buffer = MRUKNativeFuncs.CameraAcquireLatestCpuImage != null
+                        ? MRUKNativeFuncs.CameraAcquireLatestCpuImage(_currentCameraIndex, ref timestampMicroseconds, ref _timestampNsMonotonic)
+                        : null;
+                    if (buffer == null)
+                    {
+                        return;
+                    }
+                    try
+                    {
+                        var tex2d = _texture as Texture2D;
+                        Assert.IsNotNull(tex2d);
+                        tex2d.LoadRawTextureData((IntPtr)buffer, CurrentResolution.x * CurrentResolution.y * sizeof(Color32));
+                        tex2d.Apply();
+                    }
+                    finally
+                    {
+                        MRUKNativeFuncs.CameraReleaseLatestCpuImage?.Invoke(_currentCameraIndex);
+                    }
+                }
+            }
+            else
+#endif
+            {
+                if (!MRUKNativeFuncs.CameraGetLatestImage(_currentCameraIndex, ref timestampMicroseconds, ref _timestampNsMonotonic))
                 {
                     return;
                 }
-                try
-                {
-                    var tex2d = _texture as Texture2D;
-                    Assert.IsNotNull(tex2d);
-                    tex2d.LoadRawTextureData((IntPtr)buffer, CurrentResolution.x * CurrentResolution.y * sizeof(Color32));
-                    tex2d.Apply();
-                }
-                finally
-                {
-                    MRUKNativeFuncs.CameraReleaseLatestCpuImage?.Invoke(_currentCameraIndex);
-                }
+                PcaDebugLog("GL.IssuePluginEvent");
+                GL.IssuePluginEvent(Marshal.GetFunctionPointerForDelegate(MRUKNativeFuncs.CameraUpdateNativeTexture), _currentCameraIndex);
+                GL.InvalidateState(); // Needed because native code modifies render state
             }
-#else
-            if (!MRUKNativeFuncs.CameraGetLatestImage(_currentCameraIndex, ref timestampMicroseconds, ref _timestampNsMonotonic))
-            {
-                return;
-            }
-            PcaDebugLog("GL.IssuePluginEvent");
-            GL.IssuePluginEvent(Marshal.GetFunctionPointerForDelegate(MRUKNativeFuncs.CameraUpdateNativeTexture), _currentCameraIndex);
-            GL.InvalidateState(); // Needed because native code modifies render state
-#endif
 
             _isPlaying = true;
             const long ticksPerMicrosecond = 10;
@@ -418,7 +428,7 @@ namespace Meta.XR
 
             if (_texture == null)
             {
-#if UNITY_EDITOR && OVR_INTERNAL_CODE
+#if UNITY_EDITOR
                 if (Application.isEditor)
                 {
                     _texture = new Texture2D(CurrentResolution.x, CurrentResolution.y, TextureFormat.RGBA32, false);
@@ -567,10 +577,13 @@ namespace Meta.XR
             {
                 return default;
             }
-            var headPose = OVRPlugin.GetNodePoseStateAtTime(_timestampNsMonotonic * 1e-9f, OVRPlugin.Node.Head).Pose.ToOVRPose();
+            Vector3 pos = default;
+            Quaternion rot = default;
+            MRUKNativeFuncs.GetHeadsetPoseAtTime(_timestampNsMonotonic, ref pos, ref rot);
+            var headPose = MRUK.FlipZ(new Pose(pos, rot));
             var lensOffset = Intrinsics.LensOffset;
-            return new Pose(headPose.position + headPose.orientation * lensOffset.position,
-                headPose.orientation * lensOffset.rotation);
+            return new Pose(headPose.position + headPose.rotation * lensOffset.position,
+                headPose.rotation * lensOffset.rotation);
         }
 
         private bool ValidateIsPlaying()

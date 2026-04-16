@@ -739,9 +739,9 @@ namespace Meta.XR.MRUtilityKit
         public void CreateObstacles(List<MRUKRoom> rooms)
         {
             ObstacleRoot.transform.SetParent(transform);
-            foreach (var _room in rooms)
+            foreach (var currentRoom in rooms)
             {
-                var sceneAnchors = _room.Anchors;
+                var sceneAnchors = currentRoom.Anchors;
                 foreach (var anchor in sceneAnchors)
                 {
                     CreateObstacle(anchor);
@@ -850,9 +850,9 @@ namespace Meta.XR.MRUtilityKit
             }
 
             _surfacesRoot.transform.SetParent(transform);
-            foreach (var _room in rooms)
+            foreach (var currentRoom in rooms)
             {
-                var sceneAnchors = _room.Anchors;
+                var sceneAnchors = currentRoom.Anchors;
                 foreach (var anchor in sceneAnchors)
                 {
                     CreateNavigableSurface(anchor);

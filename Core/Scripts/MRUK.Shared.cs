@@ -117,6 +117,10 @@ namespace Meta.XR.MRUtilityKit
                     Debug.LogError($"Failed to initialize Open XR. xrInstance: {xrInstance}, xrSession: {xrSession}, xrInstanceProcAddrFunc: {xrInstanceProcAddrFunc}");
                 }
             }
+            else
+            {
+                Debug.Log("OpenXR is not available. MRUK will not be able to use OpenXR features.");
+            }
 
             IntPtr unityInterfaces = OVRPlugin.GetUnityInterfaces();
             if (unityInterfaces != IntPtr.Zero)

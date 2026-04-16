@@ -190,7 +190,7 @@ namespace Meta.XR.MRUtilityKit
         /// If QR code tracking is supported, you can enable it by setting the <see cref="OVRAnchor.TrackerConfiguration.QRCodeTrackingEnabled"/>
         /// property on the <see cref="TrackerConfiguration"/>.
         /// </remarks>
-        public bool QRCodeTrackingSupported => MRUKNativeFuncs.CheckQrCodeTrackingSupported();
+        public bool QRCodeTrackingSupported => MRUKNativeFuncs.CheckQrCodeTrackingSupported != null && MRUKNativeFuncs.CheckQrCodeTrackingSupported();
 
         /// <summary>
         /// Get all the trackables that have been detected so far.
@@ -293,14 +293,14 @@ namespace Meta.XR.MRUtilityKit
             if (config.QRCodeTrackingEnabled)
             {
                 var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.StartMarkerTracker);
-                unifiedEvent.SetMetadata("result", result == MRUKNativeFuncs.MrukResult.Success);
+                unifiedEvent.result = result == MRUKNativeFuncs.MrukResult.Success ? OVRPlugin.UnifiedEventResult.SUCCESS : OVRPlugin.UnifiedEventResult.FAIL;
                 unifiedEvent.SendMRUKEvent();
             }
 
             if (config.KeyboardTrackingEnabled)
             {
                 var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.StartKeyboardTracker);
-                unifiedEvent.SetMetadata("result", result == MRUKNativeFuncs.MrukResult.Success);
+                unifiedEvent.result = result == MRUKNativeFuncs.MrukResult.Success ? OVRPlugin.UnifiedEventResult.SUCCESS : OVRPlugin.UnifiedEventResult.FAIL;
                 unifiedEvent.SendMRUKEvent();
             }
 
