@@ -19,6 +19,7 @@
  */
 
 using Meta.XR.Util;
+using Meta.XR.Telemetry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -294,30 +295,14 @@ namespace Meta.XR.MRUtilityKit
 
         private void Start()
         {
-            var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.LoadEffectMesh);
+            var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.LoadEffectMesh);
             unifiedEvent.SendMRUKEvent();
             if (MRUK.Instance is null)
             {
                 return;
             }
 
-            MRUK.Instance.RegisterSceneLoadedCallback(() =>
-            {
-                if (SpawnOnStart == MRUK.RoomFilter.None)
-                {
-                    return;
-                }
-
-                switch (SpawnOnStart)
-                {
-                    case MRUK.RoomFilter.CurrentRoomOnly:
-                        CreateMesh(MRUK.Instance.GetCurrentRoom());
-                        break;
-                    case MRUK.RoomFilter.AllRooms:
-                        CreateMesh();
-                        break;
-                }
-            });
+            MRUK.Instance.RegisterSceneLoadedCallback(ReceiveSceneLoadedEvent);
 
             if (!TrackUpdates)
             {
@@ -388,6 +373,24 @@ namespace Meta.XR.MRUtilityKit
             if (anchor.HasAnyLabel(Labels))
             {
                 CreateEffectMesh(anchor);
+            }
+        }
+
+        private void ReceiveSceneLoadedEvent()
+        {
+            if (SpawnOnStart == MRUK.RoomFilter.None)
+            {
+                return;
+            }
+
+            switch (SpawnOnStart)
+            {
+                case MRUK.RoomFilter.CurrentRoomOnly:
+                    CreateMesh(MRUK.Instance.GetCurrentRoom());
+                    break;
+                case MRUK.RoomFilter.AllRooms:
+                    CreateMesh();
+                    break;
             }
         }
 
@@ -1111,7 +1114,7 @@ namespace Meta.XR.MRUtilityKit
             // Unregister from MRUK instance callbacks
             MRUK.Instance.RoomCreatedEvent.RemoveListener(ReceiveCreatedRoom);
             MRUK.Instance.RoomRemovedEvent.RemoveListener(ReceiveRemovedRoom);
-
+            MRUK.Instance.SceneLoadedEvent.RemoveListener(ReceiveSceneLoadedEvent);
             // Unregister from all tracked rooms' anchor callbacks
             foreach (var room in MRUK.Instance.Rooms)
             {

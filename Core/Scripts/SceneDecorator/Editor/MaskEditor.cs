@@ -19,12 +19,14 @@
  */
 
 #if UNITY_EDITOR
+using System;
 using Meta.XR.Util;
 using UnityEditor;
 
 namespace Meta.XR.MRUtilityKit.SceneDecorator
 {
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     [CustomEditor(typeof(Mask), true)]
     public class MaskEditor : UnityEditor.Editor
     {

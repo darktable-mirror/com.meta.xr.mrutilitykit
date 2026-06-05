@@ -34,6 +34,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// </summary>
     [CustomEditor(typeof(SceneDecoration))]
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class SceneDecorationEditor : UnityEditor.Editor
     {
         private static readonly Type[] MaskTypes = new Type[]

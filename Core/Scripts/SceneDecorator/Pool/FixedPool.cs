@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+using System;
 using System.Collections.Generic;
 using Meta.XR.Util;
 
@@ -28,6 +29,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// </summary>
     /// <typeparam name="T">Type</typeparam>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class FixedPool<T> : Pool<T> where T : class
     {
         /// <summary>

@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+using System;
 using System.Collections.Generic;
 using Meta.XR.Util;
 
@@ -29,6 +30,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// <typeparam name="K">The type of the primitive object used as a key for the pools.</typeparam>
     /// <typeparam name="P">The type of the pool that extends Pool&lt;K&gt;.</typeparam>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class PoolManager<K, P> where K : class
         where P : Pool<K>
     {

@@ -51,7 +51,7 @@ namespace Meta.XR.MRUtilityKit
 
         [DllImport("libdl.dylib")]
         private static extern int dlclose(IntPtr handle);
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID || UNITY_EDITOR_LINUX || UNITY_STANDALONE_LINUX
         [DllImport("libdl.so")]
         private static extern IntPtr dlopen(string filename, int flags);
 
@@ -74,7 +74,7 @@ namespace Meta.XR.MRUtilityKit
         {
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
             return LoadLibrary(path);
-#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_ANDROID
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_ANDROID || UNITY_EDITOR_LINUX || UNITY_STANDALONE_LINUX
             const int RTLD_NOW = 2;
             return dlopen(path, RTLD_NOW);
 #else
@@ -92,7 +92,7 @@ namespace Meta.XR.MRUtilityKit
         {
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
             return GetProcAddress(dllHandle, name);
-#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_ANDROID
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_ANDROID || UNITY_EDITOR_LINUX || UNITY_STANDALONE_LINUX
             return dlsym(dllHandle, name);
 #else
             return IntPtr.Zero;
@@ -108,7 +108,7 @@ namespace Meta.XR.MRUtilityKit
         {
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
             return FreeLibrary(dllHandle);
-#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_ANDROID
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_ANDROID || UNITY_EDITOR_LINUX || UNITY_STANDALONE_LINUX
             return dlclose(dllHandle) == 0;
 #else
             return false;
@@ -144,10 +144,14 @@ namespace Meta.XR.MRUtilityKit
             path = Path.Join(Application.dataPath, "Plugins/ARM64/libmrutilitykitshared.dylib");
 #elif UNITY_ANDROID
             path = "libmrutilitykitshared.so";
-#else
-            Debug.LogError($"mr utility kit shared library is not supported on this platform: '{Application.platform}'");
-            return;
 #endif
+
+            if (string.IsNullOrEmpty(path))
+            {
+                Debug.LogError($"mr utility kit shared library is not supported on this platform: '{Application.platform}'");
+                return;
+            }
+
             _nativeLibraryPtr = GetDllHandle(path);
 
             if (_nativeLibraryPtr == IntPtr.Zero)
@@ -192,7 +196,7 @@ namespace Meta.XR.MRUtilityKit
         /// <typeparam name="T">The delegate type that matches the signature of the native function.</typeparam>
         /// <param name="name">The name of the function to load from the shared library.</param>
         /// <returns>
-        /// A delegate of type T that can be used to call the native function, 
+        /// A delegate of type T that can be used to call the native function,
         /// or the default value of T if loading fails.
         /// </returns>
         /// <remarks>

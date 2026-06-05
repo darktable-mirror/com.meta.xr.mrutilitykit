@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Meta.XR.Telemetry;
 using Meta.XR.Util;
 using TMPro;
 using UnityEngine;
@@ -143,7 +144,7 @@ namespace Meta.XR.MRUtilityKit
         private void Start()
         {
             MRUK.Instance?.RegisterSceneLoadedCallback(OnSceneLoaded);
-            var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.LoadSceneDebugger);
+            var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.LoadSceneDebugger);
             unifiedEvent.SendMRUKEvent();
             _currentRoom = MRUK.Instance?.GetCurrentRoom();
             _spaceMapGPU = GetSpaceMapGPU();
@@ -170,6 +171,10 @@ namespace Meta.XR.MRUtilityKit
             CreateDebugPrimitives();
         }
 
+        private void OnDestroy()
+        {
+            MRUK.Instance?.SceneLoadedEvent.RemoveListener(OnSceneLoaded);
+        }
 
         private void Update()
         {

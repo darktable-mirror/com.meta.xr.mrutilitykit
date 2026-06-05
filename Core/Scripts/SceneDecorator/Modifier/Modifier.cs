@@ -29,6 +29,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// Base class for all modifiers.
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public abstract class Modifier : ScriptableObject
     {
         /// <summary>

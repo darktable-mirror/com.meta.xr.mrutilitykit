@@ -23,9 +23,12 @@ using Meta.XR.Util;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+#pragma warning disable CS0618 // Type or member is obsolete
+
 namespace Meta.XR.MRUtilityKit.SceneDecorator
 {
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public static class SingletonMonoBehaviour
     {
         /// <summary>
@@ -44,6 +47,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     ///     Use the <see cref="SingletonMonoBehaviour.InstantiationSettings"/> attribute to change the DontDestroyOnLoad behaviour.
     /// </summary>
     /// <remarks>Consider setting [DefaultExecutionOrder(-1)] on the derived class.</remarks>
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : SingletonMonoBehaviour<T>
     {
         private static T _instance;

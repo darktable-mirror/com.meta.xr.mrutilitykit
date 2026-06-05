@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+using System;
 using Meta.XR.Util;
 
 namespace Meta.XR.MRUtilityKit.SceneDecorator
@@ -26,6 +27,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// A mask that returns the anchor distance
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class AnchorDistanceMask : Mask
     {
         /// <summary>

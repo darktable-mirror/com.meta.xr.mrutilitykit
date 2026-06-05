@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using Meta.XR.Telemetry;
 using Meta.XR.Util;
 using UnityEngine;
 using UnityEngine.Events;
@@ -314,41 +315,45 @@ namespace Meta.XR.MRUtilityKit
 
         protected virtual void Start()
         {
-            var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.LoadAnchorPrefabSpawner);
+            var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.LoadAnchorPrefabSpawner);
             unifiedEvent.SendMRUKEvent();
             if (MRUK.Instance is null)
             {
                 return;
             }
 
-            MRUK.Instance.RegisterSceneLoadedCallback(() =>
-            {
-                if (SpawnOnStart == MRUK.RoomFilter.None)
-                {
-                    return;
-                }
-
-                switch (SpawnOnStart)
-                {
-                    case MRUK.RoomFilter.CurrentRoomOnly:
-                        SpawnPrefabs(MRUK.Instance.GetCurrentRoom());
-                        break;
-                    case MRUK.RoomFilter.AllRooms:
-                        SpawnPrefabs();
-                        break;
-                    case MRUK.RoomFilter.None:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            });
-
+            MRUK.Instance.RegisterSceneLoadedCallback(ReceiveSceneLoadedEvent);
             MRUK.Instance.RoomCreatedEvent.AddListener(ReceiveCreatedRoom);
             MRUK.Instance.RoomRemovedEvent.AddListener(ReceiveRemovedRoom);
 
             if (!TrackUpdates)
             {
                 return;
+            }
+        }
+
+        /// <summary>
+        /// Use this method to spawn prefabs for all the rooms in the scene.
+        /// </summary>
+        protected virtual void ReceiveSceneLoadedEvent()
+        {
+            if (SpawnOnStart == MRUK.RoomFilter.None)
+            {
+                return;
+            }
+
+            switch (SpawnOnStart)
+            {
+                case MRUK.RoomFilter.CurrentRoomOnly:
+                    SpawnPrefabs(MRUK.Instance.GetCurrentRoom());
+                    break;
+                case MRUK.RoomFilter.AllRooms:
+                    SpawnPrefabs();
+                    break;
+                case MRUK.RoomFilter.None:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -792,6 +797,7 @@ namespace Meta.XR.MRUtilityKit
             }
 
             // Unregister from MRUK instance callbacks
+            MRUK.Instance.SceneLoadedEvent.RemoveListener(ReceiveSceneLoadedEvent);
             MRUK.Instance.RoomCreatedEvent.RemoveListener(ReceiveCreatedRoom);
             MRUK.Instance.RoomRemovedEvent.RemoveListener(ReceiveRemovedRoom);
 

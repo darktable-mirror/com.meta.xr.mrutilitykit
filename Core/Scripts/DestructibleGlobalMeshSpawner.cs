@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using Meta.XR.Telemetry;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -127,36 +128,18 @@ namespace Meta.XR.MRUtilityKit
 
         private void Start()
         {
-            var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.LoadDestructibleGlobalMeshSpawner);
+            var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.LoadDestructibleGlobalMeshSpawner);
             unifiedEvent.SendMRUKEvent();
-            MRUK.Instance.RegisterSceneLoadedCallback(() =>
-            {
-                if (CreateOnRoomLoaded == MRUK.RoomFilter.None)
-                {
-                    return;
-                }
+            MRUK.Instance?.RegisterSceneLoadedCallback(ReceiveSceneLoadedEvent);
+            MRUK.Instance?.RoomCreatedEvent.AddListener(ReceiveCreatedRoom);
+            MRUK.Instance?.RoomRemovedEvent.AddListener(ReceiveRemovedRoom);
+        }
 
-                switch (CreateOnRoomLoaded)
-                {
-                    case MRUK.RoomFilter.CurrentRoomOnly:
-                        var currentRoom = MRUK.Instance.GetCurrentRoom();
-                        if (!_spawnedDestructibleMeshes.ContainsKey(currentRoom))
-                        {
-                            AddDestructibleGlobalMesh(MRUK.Instance.GetCurrentRoom());
-                        }
-
-                        break;
-                    case MRUK.RoomFilter.AllRooms:
-                        AddDestructibleGlobalMesh();
-                        break;
-                    case MRUK.RoomFilter.None:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            });
-            MRUK.Instance.RoomCreatedEvent.AddListener(ReceiveCreatedRoom);
-            MRUK.Instance.RoomRemovedEvent.AddListener(ReceiveRemovedRoom);
+        private void OnDestroy()
+        {
+            MRUK.Instance?.SceneLoadedEvent.RemoveListener(ReceiveSceneLoadedEvent);
+            MRUK.Instance?.RoomCreatedEvent.RemoveListener(ReceiveCreatedRoom);
+            MRUK.Instance?.RoomRemovedEvent.RemoveListener(ReceiveRemovedRoom);
         }
 
         /// <summary>
@@ -284,6 +267,33 @@ namespace Meta.XR.MRUtilityKit
                     Destroy(destructibleGlobalMesh.DestructibleMeshComponent.gameObject);
                 }
                 _spawnedDestructibleMeshes.Remove(room);
+            }
+        }
+
+        private void ReceiveSceneLoadedEvent()
+        {
+            if (CreateOnRoomLoaded == MRUK.RoomFilter.None)
+            {
+                return;
+            }
+
+            switch (CreateOnRoomLoaded)
+            {
+                case MRUK.RoomFilter.CurrentRoomOnly:
+                    var currentRoom = MRUK.Instance.GetCurrentRoom();
+                    if (!_spawnedDestructibleMeshes.ContainsKey(currentRoom))
+                    {
+                        AddDestructibleGlobalMesh(currentRoom);
+                    }
+
+                    break;
+                case MRUK.RoomFilter.AllRooms:
+                    AddDestructibleGlobalMesh();
+                    break;
+                case MRUK.RoomFilter.None:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

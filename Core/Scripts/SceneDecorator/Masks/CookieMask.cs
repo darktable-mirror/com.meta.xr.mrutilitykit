@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+using System;
 using Meta.XR.MRUtilityKit.Extensions;
 using Meta.XR.Util;
 using UnityEngine;
@@ -28,6 +29,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// A mask that uses a cookie texture to determine the opacity of each pixel.
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class CookieMask : Mask2D
     {
         /// <summary>

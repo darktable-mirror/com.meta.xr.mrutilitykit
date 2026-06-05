@@ -390,30 +390,40 @@ namespace Meta.XR.MRUtilityKit
             var originalVertices = originalMesh.vertices;
             var originalTriangles = originalMesh.triangles;
             var triangleCount = originalTriangles.Length;
-            var vertices = new NativeArray<Vector3>(triangleCount, Allocator.TempJob);
-            var barCoord = new NativeArray<Color>(triangleCount, Allocator.TempJob);
-            var idx = new NativeArray<int>(triangleCount, Allocator.TempJob);
-            for (var i = 0; i < triangleCount; i++)
+            var vertices = new NativeArray<Vector3>(triangleCount, Allocator.Temp);
+            var barCoord = new NativeArray<Color>(triangleCount, Allocator.Temp);
+            var idx = new NativeArray<int>(triangleCount, Allocator.Temp);
+            try
             {
-                // Assign barycentric coordinates
-                barCoord[i] = new Color(
-                    i % 3 == 0 ? 1.0f : 0.0f,
-                    i % 3 == 1 ? 1.0f : 0.0f,
-                    i % 3 == 2 ? 1.0f : 0.0f);
-                // Copy vertices and indices
-                vertices[i] = originalVertices[originalTriangles[i]];
-                idx[i] = i;
+                for (var i = 0; i < triangleCount; i++)
+                {
+                    // Assign barycentric coordinates
+                    barCoord[i] = new Color(
+                        i % 3 == 0 ? 1.0f : 0.0f,
+                        i % 3 == 1 ? 1.0f : 0.0f,
+                        i % 3 == 2 ? 1.0f : 0.0f);
+                    // Copy vertices and indices
+                    vertices[i] = originalVertices[originalTriangles[i]];
+                    idx[i] = i;
+                }
+
+                var newMesh = new Mesh
+                {
+                    indexFormat = vertices.Length > ushort.MaxValue
+                        ? IndexFormat.UInt32
+                        : IndexFormat.UInt16
+                };
+                newMesh.SetVertices(vertices);
+                newMesh.SetColors(barCoord);
+                newMesh.SetIndices(idx, MeshTopology.Triangles, 0, true, 0);
+                return newMesh;
             }
-            var newMesh = new Mesh
+            finally
             {
-                indexFormat = vertices.Length > ushort.MaxValue
-                    ? IndexFormat.UInt32
-                    : IndexFormat.UInt16
-            };
-            newMesh.SetVertices(vertices);
-            newMesh.SetColors(barCoord);
-            newMesh.SetIndices(idx, MeshTopology.Triangles, 0, true, 0);
-            return newMesh;
+                vertices.Dispose();
+                barCoord.Dispose();
+                idx.Dispose();
+            }
         }
 
         internal static void DestroyGameObjectAndChildren(MonoBehaviour monoBehaviour)

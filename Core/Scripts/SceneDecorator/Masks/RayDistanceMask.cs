@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+using System;
 using Meta.XR.Util;
 using UnityEngine;
 
@@ -27,6 +28,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// A mask that samples the distance of a raycast hit.
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class RayDistanceMask : Mask
     {
         /// <summary>

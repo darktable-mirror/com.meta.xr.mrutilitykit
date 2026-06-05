@@ -20,6 +20,7 @@
 
 using System;
 using UnityEngine;
+using Meta.XR.Telemetry;
 using Matrix4x4 = UnityEngine.Matrix4x4;
 using Vector3 = UnityEngine.Vector3;
 
@@ -247,7 +248,7 @@ namespace Meta.XR.MRUtilityKit
 
         private void Start()
         {
-            var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.LoadGridSliceResizer);
+            var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.LoadGridSliceResizer);
             unifiedEvent.SendMRUKEvent();
         }
 

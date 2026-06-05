@@ -1212,36 +1212,20 @@ namespace Meta.XR.MRUtilityKit
         /// <returns>The MRUKAnchor with the largest surface area that matches the specified labels, or null if no suitable anchor is found.</returns>
         public MRUKAnchor FindLargestSurface(MRUKAnchor.SceneLabels labelFlags)
         {
-            MRUKAnchor largestAnchor = null;
-            float largestSurfaceArea = 0;
-            foreach (var anchor in Anchors)
+            var labelFilter = new MRUKNativeFuncs.MrukLabelFilter
             {
-                if (!anchor.HasAnyLabel(labelFlags))
-                {
-                    continue;
-                }
+                surfaceType = (uint)MRUKNativeFuncs.MrukSurfaceType.All,
+                includedLabels = (uint)labelFlags,
+                includedLabelsSet = true,
+            };
 
-                float thisSurfaceArea = 0f;
-
-                if (anchor.PlaneRect.HasValue)
-                {
-                    Vector2 quadScale = anchor.PlaneRect.Value.size;
-                    thisSurfaceArea = quadScale.x * quadScale.y;
-                }
-                else if (anchor.VolumeBounds.HasValue)
-                {
-                    Vector3 volumeSize = anchor.VolumeBounds.Value.size;
-                    thisSurfaceArea = volumeSize.x * volumeSize.y;
-                }
-
-                if (thisSurfaceArea > largestSurfaceArea)
-                {
-                    largestSurfaceArea = thisSurfaceArea;
-                    largestAnchor = anchor;
-                }
+            Guid outAnchorUuid = Guid.Empty;
+            if (MRUKNativeFuncs.FindLargestSurface(Anchor.Uuid, labelFilter, ref outAnchorUuid))
+            {
+                return FindAnchorByUuid(outAnchorUuid);
             }
 
-            return largestAnchor;
+            return null;
         }
 
         /// <summary>

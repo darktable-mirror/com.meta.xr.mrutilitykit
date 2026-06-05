@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+using System;
 using Meta.XR.Util;
 using UnityEngine;
 
@@ -27,6 +28,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// A mask that uses cellular noise to generate a 2D grid of points.
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class CellularNoiseMask : Mask2D
     {
         /// <summary>

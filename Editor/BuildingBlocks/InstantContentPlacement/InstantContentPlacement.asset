@@ -49,4 +49,4 @@ MonoBehaviour:
     to use Instant Placement API. See EnvironmentRaycastManager component to get
     started.\r\n"
   featureDocumentationName: Environment Raycasting
-  featureDocumentationUrl: https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-features#environment-raycasting-beta
+  featureDocumentationUrl: https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-environment-raycast/

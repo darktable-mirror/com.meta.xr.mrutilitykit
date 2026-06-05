@@ -24,6 +24,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Meta.XR.Editor.Callbacks;
+using Meta.XR.Telemetry;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -320,7 +321,7 @@ namespace Meta.XR.MRUtilityKit.Tests
                 throw new ArgumentNullException(nameof(testMethod));
             }
 
-            var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.RunTestOnAllScenes);
+            var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.RunTestOnAllScenes);
             unifiedEvent.SendMRUKEvent();
 
             ResultTracker.Reset();

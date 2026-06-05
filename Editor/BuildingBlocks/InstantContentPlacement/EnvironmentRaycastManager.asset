@@ -31,4 +31,4 @@ MonoBehaviour:
   isSingleton: 1
   usageInstructions: 
   featureDocumentationName: Environment Raycasting
-  featureDocumentationUrl: https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-features#environment-raycasting-beta
+  featureDocumentationUrl: https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-environment-raycast/

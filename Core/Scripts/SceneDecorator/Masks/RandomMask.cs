@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+using System;
 using Meta.XR.Util;
 using UnityEngine;
 
@@ -27,6 +28,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// A mask that randomly samples a value between 0 and 1.
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class RandomMask : Mask
     {
         /// <summary>
@@ -36,7 +38,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
         /// <returns>A random float value between 0 and 1</returns>
         public override float SampleMask(Candidate candidate)
         {
-            return Random.value;
+            return UnityEngine.Random.value;
         }
 
         /// <summary>

@@ -29,6 +29,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// A mask that uses the SpaceMapGPU to determine if a point is in or out of an object.
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class SpaceMapGPUMask : Mask
     {
         private SpaceMapGPU _spaceMap;

@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Meta.XR.MRUtilityKit.SceneDecorator;
 
+#pragma warning disable CS0618 // Type or member is obsolete
+
 namespace Meta.XR.MRUtilityKit.Tests
 {
     /// <summary>

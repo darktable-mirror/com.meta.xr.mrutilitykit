@@ -22,12 +22,15 @@ using System;
 using Meta.XR.Util;
 using UnityEngine;
 
+#pragma warning disable CS0618 // Type or member is obsolete
+
 namespace Meta.XR.MRUtilityKit.SceneDecorator
 {
     /// <summary>
     /// This component is responsible for managing the pooling of GameObjects.
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class PoolManagerComponent : MonoBehaviour
     {
         /// <summary>

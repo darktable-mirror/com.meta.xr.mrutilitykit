@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+using System;
 using Meta.XR.Util;
 using UnityEngine;
 
@@ -27,6 +28,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// Base class for all masks that are 2D
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public abstract class Mask2D : Mask
     {
         /// <summary>x offset</summary>

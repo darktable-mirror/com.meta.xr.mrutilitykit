@@ -19,6 +19,7 @@
  */
 
 using System.Collections.Generic;
+using Meta.XR.Telemetry;
 using Meta.XR.Util;
 using UnityEngine;
 
@@ -55,7 +56,7 @@ namespace Meta.XR.MRUtilityKit
         {
             // required for passthrough blending to work properly
             OVRPlugin.eyeFovPremultipliedAlphaModeEnabled = false;
-            var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.LoadRoomGuardian);
+            var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.LoadRoomGuardian);
             unifiedEvent.SendMRUKEvent();
         }
 

@@ -34,4 +34,4 @@ MonoBehaviour:
   isSingleton: 1
   usageInstructions:
   featureDocumentationName: Scene Debugger
-  featureDocumentationUrl: https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-features#scenedebugger
+  featureDocumentationUrl: https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-debug

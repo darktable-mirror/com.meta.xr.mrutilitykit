@@ -18,8 +18,11 @@
  * limitations under the License.
  */
 
+using System;
 using Meta.XR.Util;
 using UnityEngine;
+
+#pragma warning disable CS0618 // Type or member is obsolete
 
 namespace Meta.XR.MRUtilityKit.SceneDecorator
 {
@@ -27,6 +30,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// This class is a singleton that manages the pool of GameObjects used by Scene Decorator.
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     [SingletonMonoBehaviour.InstantiationSettings(dontDestroyOnLoad = false)]
     public class PoolManagerSingleton : SingletonMonoBehaviour<PoolManagerSingleton>
     {

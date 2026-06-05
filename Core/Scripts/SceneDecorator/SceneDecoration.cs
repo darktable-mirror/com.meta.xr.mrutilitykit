@@ -23,13 +23,13 @@ using Meta.XR.Util;
 using UnityEditor;
 using UnityEngine;
 
-
 namespace Meta.XR.MRUtilityKit.SceneDecorator
 {
     /// <summary>
     /// This class is used to define a decoration effect.
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecoration is deprecated and will be removed in a future version.")]
     [CreateAssetMenu(fileName = "SceneDecoration", menuName = "Meta/MRUK/Scene Decoration")]
     public class SceneDecoration : ScriptableObject
     {

@@ -26,6 +26,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// <summary>
     /// Define how the constraints are checked, by value or boolean
     /// </summary>
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     [Serializable]
     public enum ConstraintModeCheck
     {
@@ -36,6 +37,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// <summary>
     /// A struct that contains all the information for a constraint
     /// </summary>
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     [Serializable]
     public struct Constraint
     {

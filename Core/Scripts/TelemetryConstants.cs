@@ -20,6 +20,7 @@
 
 /// @cond
 
+using Meta.XR.Telemetry;
 using UnityEngine;
 
 namespace Meta.XR.MRUtilityKit
@@ -86,10 +87,10 @@ namespace Meta.XR.MRUtilityKit
     {
         private static readonly string ApplicationPlatform = Application.platform.ToString();
 
-        public static bool SendMRUKEvent(this OVRPlugin.UnifiedEventData eventData)
+        public static bool SendMRUKEvent(this UnifiedEventData eventData)
         {
-            eventData.productType = OVRPlugin.ProductType.Mruk;
-            eventData.isEssential = OVRPlugin.Bool.False;
+            eventData.productType = TelemetryProductType.Mruk;
+            eventData.isEssential = false;
             eventData.SetMetadata("device_os", SystemInfo.operatingSystem);
             eventData.SetMetadata("developer_platform", ApplicationPlatform);
             eventData.SetMetadata("openxr_runtime_name", OVRPlugin.runtimeName);

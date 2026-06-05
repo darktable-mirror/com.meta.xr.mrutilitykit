@@ -19,6 +19,7 @@
  */
 
 #if UNITY_EDITOR
+using System;
 using Meta.XR.Util;
 using UnityEditor;
 
@@ -29,6 +30,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// </summary>
     [CustomEditor(typeof(Modifier), true)]
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class ModifierEditor : UnityEditor.Editor
     {
         /// <summary>

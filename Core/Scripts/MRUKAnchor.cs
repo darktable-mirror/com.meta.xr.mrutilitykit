@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using Meta.XR.Telemetry;
 using Meta.XR.Util;
 using Unity.Collections;
 using UnityEngine;

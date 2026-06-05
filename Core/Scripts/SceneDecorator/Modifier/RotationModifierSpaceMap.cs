@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+using System;
 using System.Collections.Generic;
 using Meta.XR.Util;
 using UnityEngine;
@@ -28,6 +29,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// This modifier will rotate the decoration to match a color from the spacemap
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class RotationModifierSpaceMap : Modifier
     {
         [SerializeField]

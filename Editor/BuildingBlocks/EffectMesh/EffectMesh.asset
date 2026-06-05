@@ -32,4 +32,4 @@ MonoBehaviour:
   isSingleton: 0
   usageInstructions:
   featureDocumentationName: Effect Mesh
-  featureDocumentationUrl: https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-features#effectmesh
+  featureDocumentationUrl: https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-manage-scene-data#visualizing-the-scene-with-the-effect-mesh-class

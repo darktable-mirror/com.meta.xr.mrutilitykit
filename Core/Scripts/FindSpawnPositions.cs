@@ -19,6 +19,7 @@
  */
 
 using System.Collections.Generic;
+using Meta.XR.Telemetry;
 using Meta.XR.Util;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -125,23 +126,17 @@ namespace Meta.XR.MRUtilityKit
 
         private void Start()
         {
-            var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.LoadFindSpawnPositions);
+            var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.LoadFindSpawnPositions);
             unifiedEvent.SendMRUKEvent();
-            if (MRUK.Instance && SpawnOnStart != MRUK.RoomFilter.None)
+            if (SpawnOnStart != MRUK.RoomFilter.None)
             {
-                MRUK.Instance.RegisterSceneLoadedCallback(() =>
-                {
-                    switch (SpawnOnStart)
-                    {
-                        case MRUK.RoomFilter.AllRooms:
-                            StartSpawn();
-                            break;
-                        case MRUK.RoomFilter.CurrentRoomOnly:
-                            StartSpawn(MRUK.Instance.GetCurrentRoom());
-                            break;
-                    }
-                });
+                MRUK.Instance?.RegisterSceneLoadedCallback(ReceiveSceneLoadedEvent);
             }
+        }
+
+        private void OnDestroy()
+        {
+            MRUK.Instance?.SceneLoadedEvent.RemoveListener(ReceiveSceneLoadedEvent);
         }
 
         /// <summary>
@@ -308,6 +303,19 @@ namespace Meta.XR.MRUtilityKit
             }
 
             _spawnedObjects.Clear();
+        }
+
+        private void ReceiveSceneLoadedEvent()
+        {
+            switch (SpawnOnStart)
+            {
+                case MRUK.RoomFilter.AllRooms:
+                    StartSpawn();
+                    break;
+                case MRUK.RoomFilter.CurrentRoomOnly:
+                    StartSpawn(MRUK.Instance.GetCurrentRoom());
+                    break;
+            }
         }
     }
 }

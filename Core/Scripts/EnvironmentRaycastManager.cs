@@ -23,11 +23,9 @@ using System.Collections;
 using System.Threading.Tasks;
 using Meta.XR.EnvironmentDepth;
 using Meta.XR.MRUtilityKit;
+using Meta.XR.Telemetry;
 using UnityEngine;
 using UnityEngine.Android;
-#if UNITY_EDITOR
-using Meta.XR.Telemetry;
-#endif
 
 namespace Meta.XR
 {
@@ -95,7 +93,7 @@ namespace Meta.XR
         private void Start()
         {
             string eventName = IsUsingOpenXRProvider() ? TelemetryConstants.EventName.LoadEnvironmentRaycastOpenxr : TelemetryConstants.EventName.LoadEnvironmentRaycast;
-            var unifiedEvent = new OVRPlugin.UnifiedEventData(eventName);
+            var unifiedEvent = new UnifiedEventData(eventName);
             unifiedEvent.SendMRUKEvent();
         }
 

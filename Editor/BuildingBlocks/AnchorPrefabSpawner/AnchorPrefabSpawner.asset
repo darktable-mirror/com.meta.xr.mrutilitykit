@@ -32,4 +32,4 @@ MonoBehaviour:
   isSingleton: 0
   usageInstructions:
   featureDocumentationName: Anchor Prefab Spawner
-  featureDocumentationUrl: https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-features#anchorprefabspawner
+  featureDocumentationUrl: https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-content-placement#anchorprefabspawner

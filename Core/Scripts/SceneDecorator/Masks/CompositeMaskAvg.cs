@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+using System;
 using Meta.XR.MRUtilityKit.Extensions;
 using Meta.XR.Util;
 using UnityEngine;
@@ -28,6 +29,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// A mask that averages the results of multiple other masks.
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class CompositeMaskAvg : Mask2D
     {
         [SerializeField]

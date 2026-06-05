@@ -138,6 +138,7 @@ namespace Meta.XR.MRUtilityKit
             Ready = 2,
         }
 
+
         public delegate void LogPrinter(MrukLogLevel logLevel, char* message, uint length);
 
         public delegate void MrukOnPreRoomAnchorAdded(ref MrukRoomAnchor roomAnchor, IntPtr userContext);
@@ -371,6 +372,7 @@ namespace Meta.XR.MRUtilityKit
         }
 
 
+
         /// This allows the engine to intercept the logs from the shared library and print them using the
         /// engine's logging system. Note that the log lines are NOT NULL terminated, and so you must take
         /// into account the length and be careful not to read past it.
@@ -487,6 +489,18 @@ namespace Meta.XR.MRUtilityKit
         /// @return True if a room was found, false otherwise.
         [return: MarshalAs(UnmanagedType.U1)]
         internal delegate bool GetCurrentRoomDelegate(ref Guid outRoomUuid);
+
+        /// Find the anchor with the largest surface in the room that matches the label filter.
+        /// Surface area is calculated from the anchor's plane (width * height) or volume top face (width *
+        /// depth).
+        ///
+        /// @param[in] roomUuid The unique identifier for the room.
+        /// @param[in] labelFilter Filter to specify which labels to include.
+        /// @param[out] outSceneAnchorUuid Pointer to a MrukUuid that will be filled with the found anchor
+        /// UUID.
+        /// @return True if an anchor was found, false otherwise.
+        [return: MarshalAs(UnmanagedType.U1)]
+        internal delegate bool FindLargestSurfaceDelegate(Guid roomUuid, MrukLabelFilter labelFilter, ref Guid outSceneAnchorUuid);
 
         /// Checks whether scene anchor discovery is currently in progress.
         ///
@@ -714,6 +728,7 @@ namespace Meta.XR.MRUtilityKit
         /// @param[out] outOrientation The headset orientation
         internal delegate void GetHeadsetPoseAtTimeDelegate(long time, ref Vector3 outPosition, ref Quaternion outOrientation);
 
+
         internal static SetLogPrinterDelegate SetLogPrinter;
         internal static CreateGlobalContextDelegate CreateGlobalContext;
         internal static DestroyGlobalContextDelegate DestroyGlobalContext;
@@ -739,6 +754,7 @@ namespace Meta.XR.MRUtilityKit
         internal static RaycastAnchorAllDelegate RaycastAnchorAll;
         internal static IsPositionInRoomDelegate IsPositionInRoom;
         internal static GetCurrentRoomDelegate GetCurrentRoom;
+        internal static FindLargestSurfaceDelegate FindLargestSurface;
         internal static IsDiscoveryRunningDelegate IsDiscoveryRunning;
         internal static SetCustomWorldLockAnchorDelegate SetCustomWorldLockAnchor;
         internal static ErasePersistedWorldLockAnchorDelegate ErasePersistedWorldLockAnchor;
@@ -802,6 +818,7 @@ namespace Meta.XR.MRUtilityKit
             RaycastAnchorAll = MRUKNative.LoadFunction<RaycastAnchorAllDelegate>("RaycastAnchorAll");
             IsPositionInRoom = MRUKNative.LoadFunction<IsPositionInRoomDelegate>("IsPositionInRoom");
             GetCurrentRoom = MRUKNative.LoadFunction<GetCurrentRoomDelegate>("GetCurrentRoom");
+            FindLargestSurface = MRUKNative.LoadFunction<FindLargestSurfaceDelegate>("FindLargestSurface");
             IsDiscoveryRunning = MRUKNative.LoadFunction<IsDiscoveryRunningDelegate>("IsDiscoveryRunning");
             SetCustomWorldLockAnchor = MRUKNative.LoadFunction<SetCustomWorldLockAnchorDelegate>("SetCustomWorldLockAnchor");
             ErasePersistedWorldLockAnchor = MRUKNative.LoadFunction<ErasePersistedWorldLockAnchorDelegate>("ErasePersistedWorldLockAnchor");
@@ -866,6 +883,7 @@ namespace Meta.XR.MRUtilityKit
             RaycastAnchorAll = null;
             IsPositionInRoom = null;
             GetCurrentRoom = null;
+            FindLargestSurface = null;
             IsDiscoveryRunning = null;
             SetCustomWorldLockAnchor = null;
             ErasePersistedWorldLockAnchor = null;

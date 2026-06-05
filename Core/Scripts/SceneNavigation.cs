@@ -19,6 +19,7 @@
  */
 
 using System;
+using Meta.XR.Telemetry;
 using UnityEngine;
 using UnityEngine.Events;
 using Unity.AI.Navigation;
@@ -264,7 +265,7 @@ namespace Meta.XR.MRUtilityKit
 
         private void Start()
         {
-            var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.LoadSceneNavigation);
+            var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.LoadSceneNavigation);
             unifiedEvent.SendMRUKEvent();
             if (MRUK.Instance is null)
             {

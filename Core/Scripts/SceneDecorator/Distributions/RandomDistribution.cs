@@ -30,6 +30,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// </summary>
     [Serializable]
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class RandomDistribution : SceneDecorator.IDistribution
     {
         [SerializeField]

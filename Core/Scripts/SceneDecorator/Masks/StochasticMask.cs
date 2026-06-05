@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+using System;
 using Meta.XR.MRUtilityKit.Extensions;
 using Meta.XR.Util;
 using UnityEngine;
@@ -29,6 +30,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// A mask that randomly samples a probability from another mask and returns 1 if the sampled value is greater than or equal to the threshold.
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class StochasticMask : Mask2D
     {
         [SerializeField]

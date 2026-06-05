@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using Meta.XR.Telemetry;
 using Meta.XR.Util;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -30,6 +31,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// This class is used to decorate the scene with objects.
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class SceneDecorator : MonoBehaviour
     {
         public static readonly float PI = 3.14159f;
@@ -80,7 +82,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
             _poolManagerComponent = gameObject.AddComponent<PoolManagerComponent>();
             InitPools();
 
-            var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.LoadSceneDecoration);
+            var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.LoadSceneDecoration);
             unifiedEvent.SendMRUKEvent();
             if (MRUK.Instance is null)
             {

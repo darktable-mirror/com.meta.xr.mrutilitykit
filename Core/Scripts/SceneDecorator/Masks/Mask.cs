@@ -32,6 +32,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// A mask that can be used to filter out objects from the scene.
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public abstract class Mask : ScriptableObject
     {
         /// <summary>

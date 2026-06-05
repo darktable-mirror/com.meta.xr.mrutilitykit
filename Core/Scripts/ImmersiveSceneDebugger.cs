@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Meta.XR.Telemetry;
 using Meta.XR.Util;
 using UnityEngine;
 using UnityEngine.AI;
@@ -63,7 +64,6 @@ namespace Meta.XR.MRUtilityKit
                 }
 
                 _currentRoom = MRUK.Instance.GetCurrentRoom();
-                _globalMeshAnchor = _currentRoom.GlobalMeshAnchor;
                 return true;
             }
         }
@@ -79,7 +79,6 @@ namespace Meta.XR.MRUtilityKit
         private bool _previousShowDebugAnchors;
         private Mesh _debugCheckerMesh;
         private MRUKAnchor _previousShownDebugAnchor;
-        private MRUKAnchor _globalMeshAnchor;
 
         private NavMeshTriangulation _navMeshTriangulation;
 
@@ -238,8 +237,7 @@ namespace Meta.XR.MRUtilityKit
 
         private void Start()
         {
-            MRUK.Instance?.RegisterSceneLoadedCallback(OnSceneLoaded);
-            var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.LoadSceneDebugger);
+            var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.LoadSceneDebugger);
             unifiedEvent.SendMRUKEvent();
             _currentRoom = MRUK.Instance?.GetCurrentRoom();
             _sceneDetails = ShowRoomDetails();
@@ -294,19 +292,6 @@ namespace Meta.XR.MRUtilityKit
         private void OnDisable()
         {
             _currentDebugAction = null;
-        }
-
-        public void OnDestroy()
-        {
-            MRUK.Instance?.SceneLoadedEvent.RemoveListener(OnSceneLoaded);
-        }
-
-        private void OnSceneLoaded()
-        {
-            if (MRUK.Instance && MRUK.Instance.GetCurrentRoom() && !_globalMeshAnchor)
-            {
-                _globalMeshAnchor = MRUK.Instance.GetCurrentRoom().GlobalMeshAnchor;
-            }
         }
 
         private void IsPositionInRoom()
@@ -436,6 +421,7 @@ namespace Meta.XR.MRUtilityKit
             return new DebugAction(
                 async () =>
                 {
+                    _currentDebugAction = null;
                     var spaceCaptured = await OVRScene.RequestSpaceSetup();
                     if (!spaceCaptured)
                     {
@@ -701,7 +687,8 @@ namespace Meta.XR.MRUtilityKit
         /// <param name="isOn">If set to true, the global mesh will be displayed.</param>
         public void DisplayGlobalMesh(bool isOn)
         {
-            if (!_globalMeshAnchor)
+            var globalMeshAnchor = MRUK.Instance ? MRUK.Instance.GetCurrentRoom()?.GlobalMeshAnchor : null;
+            if (!globalMeshAnchor)
             {
                 Debug.Log($"[{nameof(DisplayGlobalMesh)}] No global mesh anchor found in the scene.");
                 return;
@@ -716,11 +703,12 @@ namespace Meta.XR.MRUtilityKit
                         DestroyImmediate(_globalMeshGO);
                     }
 
-                    InstantiateGlobalMesh((globalMeshSegmentGO, mesh) =>
-                    {
-                        var meshRenderer = globalMeshSegmentGO.AddComponent<MeshRenderer>();
-                        meshRenderer.material = visualHelperMaterial;
-                    });
+                    _globalMeshGO = new GameObject("_globalMeshViz");
+                    _globalMeshGO.transform.SetParent(globalMeshAnchor.transform, false);
+                    var meshFilter = _globalMeshGO.AddComponent<MeshFilter>();
+                    meshFilter.mesh = Utilities.AddBarycentricCoordinatesToMesh(globalMeshAnchor.Mesh);
+                    var meshRenderer = _globalMeshGO.AddComponent<MeshRenderer>();
+                    meshRenderer.material = visualHelperMaterial;
                 }
                 else
                 {
@@ -742,7 +730,8 @@ namespace Meta.XR.MRUtilityKit
         /// <param name="isOn">If set to true, collisions for the global mesh anchor will be enabled </param>
         public void ToggleGlobalMeshCollisions(bool isOn)
         {
-            if (!_globalMeshAnchor)
+            var globalMeshAnchor = MRUK.Instance ? MRUK.Instance.GetCurrentRoom()?.GlobalMeshAnchor : null;
+            if (!globalMeshAnchor)
             {
                 Debug.Log($"[{nameof(ToggleGlobalMeshCollisions)}] No global mesh anchor found in the scene.");
                 return;
@@ -759,9 +748,9 @@ namespace Meta.XR.MRUtilityKit
 
                     var globalMeshColliderGO =
                         new GameObject($"_globalMeshCollider");
-                    globalMeshColliderGO.transform.SetParent(_globalMeshAnchor.transform, false);
+                    globalMeshColliderGO.transform.SetParent(globalMeshAnchor.transform, false);
                     _globalMeshCollider = globalMeshColliderGO.AddComponent<MeshCollider>();
-                    _globalMeshCollider.sharedMesh = _globalMeshAnchor.GlobalMesh;
+                    _globalMeshCollider.sharedMesh = globalMeshAnchor.GlobalMesh;
                 }
                 else
                 {
@@ -775,17 +764,6 @@ namespace Meta.XR.MRUtilityKit
                     _globalMeshCollider.enabled = false;
                 }
             }
-        }
-
-        private void InstantiateGlobalMesh(Action<GameObject, Mesh> onMeshSegmentInstantiated)
-        {
-            var processedMesh = Utilities.AddBarycentricCoordinatesToMesh(_globalMeshAnchor.Mesh);
-            _globalMeshGO = new GameObject($"_globalMeshViz");
-            _globalMeshGO.transform.SetParent(MRUK.Instance.GetCurrentRoom().GlobalMeshAnchor.transform,
-                false);
-            var meshFilter = _globalMeshGO.AddComponent<MeshFilter>();
-            meshFilter.mesh = processedMesh;
-            onMeshSegmentInstantiated?.Invoke(_globalMeshGO, processedMesh);
         }
 
         /// <summary>

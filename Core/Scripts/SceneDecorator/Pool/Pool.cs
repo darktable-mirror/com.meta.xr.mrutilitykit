@@ -31,6 +31,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public abstract class Pool<T> where T : class
     {
         /// <summary>

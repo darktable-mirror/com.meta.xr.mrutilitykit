@@ -22,6 +22,7 @@ using System;
 using Meta.XR.Util;
 using UnityEngine;
 
+
 namespace Meta.XR.MRUtilityKit.SceneDecorator
 {
     /// <summary>
@@ -29,6 +30,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// </summary>
     [Serializable]
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class GridDistribution : SceneDecorator.IDistribution
     {
         [SerializeField] private float _spacingX = 1f;

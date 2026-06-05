@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using Meta.XR.Telemetry;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Rendering;
@@ -261,7 +262,7 @@ namespace Meta.XR.MRUtilityKit
             InitUpdateGradientTexture();
             ApplyMaterial();
 
-            var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.LoadSpaceMap);
+            var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.LoadSpaceMap);
             unifiedEvent.SendMRUKEvent();
 
             if (MRUK.Instance is not null)

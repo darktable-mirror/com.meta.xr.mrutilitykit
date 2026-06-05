@@ -28,10 +28,8 @@ using UnityEngine.Android;
 using UnityEngine.Assertions;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
-using Debug = UnityEngine.Debug;
-#if UNITY_EDITOR
 using Meta.XR.Telemetry;
-#endif
+using Debug = UnityEngine.Debug;
 
 namespace Meta.XR
 {
@@ -53,7 +51,10 @@ namespace Meta.XR
         public enum CameraPositionType { Left, Right }
         /// <summary>Requested camera position. To access both left and right camera simultaneously, create two instances of <see cref="PassthroughCameraAccess"/> with different <see cref="PassthroughCameraAccess.CameraPosition"/></summary>
         [SerializeField] public CameraPositionType CameraPosition;
-        /// <summary>The requested resolution of the camera. If the requested resolution is not present in <see cref="GetSupportedResolutions"/>, the first smaller resolution will be selected instead.</summary>
+        /// <summary>The requested resolution of the camera. If the requested resolution is not present in <see cref="GetSupportedResolutions"/>, these rules are applied in order:<br/>
+        /// - Tries to pick the first smaller resolution with the same aspect ratio.<br/>
+        /// - Tries to pick the first smaller resolution.<br/>
+        /// - Picks the smallest supported resolution.<br/></summary>
         [SerializeField] public Vector2Int RequestedResolution = new Vector2Int(1280, 960);
         [Tooltip("Maximum framerate for the camera stream (frames per second). The actual framerate may vary based on lighting conditions and the current workload.")]
         [SerializeField] private int _maxFramerate = 60;
@@ -281,7 +282,7 @@ namespace Meta.XR
 
         private void Start()
         {
-            var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.LoadPassthroughCameraAccess);
+            var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.LoadPassthroughCameraAccess);
             unifiedEvent.SendMRUKEvent();
         }
 

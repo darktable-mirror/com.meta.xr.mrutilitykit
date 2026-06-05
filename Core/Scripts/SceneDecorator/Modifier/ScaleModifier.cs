@@ -28,6 +28,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// A modifier that scales the decoration based on a mask
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class ScaleModifier : Modifier
     {
         /// <summary>

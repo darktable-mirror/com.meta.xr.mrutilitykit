@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using Meta.XR.Telemetry;
 using UnityEngine;
 using UnityEngine.Android;
 using UnityEngine.Events;
@@ -292,15 +293,15 @@ namespace Meta.XR.MRUtilityKit
 
             if (config.QRCodeTrackingEnabled)
             {
-                var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.StartMarkerTracker);
-                unifiedEvent.result = result == MRUKNativeFuncs.MrukResult.Success ? OVRPlugin.UnifiedEventResult.SUCCESS : OVRPlugin.UnifiedEventResult.FAIL;
+                var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.StartMarkerTracker);
+                unifiedEvent.result = result == MRUKNativeFuncs.MrukResult.Success ? UnifiedEventResult.SUCCESS : UnifiedEventResult.FAIL;
                 unifiedEvent.SendMRUKEvent();
             }
 
             if (config.KeyboardTrackingEnabled)
             {
-                var unifiedEvent = new OVRPlugin.UnifiedEventData(TelemetryConstants.EventName.StartKeyboardTracker);
-                unifiedEvent.result = result == MRUKNativeFuncs.MrukResult.Success ? OVRPlugin.UnifiedEventResult.SUCCESS : OVRPlugin.UnifiedEventResult.FAIL;
+                var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.StartKeyboardTracker);
+                unifiedEvent.result = result == MRUKNativeFuncs.MrukResult.Success ? UnifiedEventResult.SUCCESS : UnifiedEventResult.FAIL;
                 unifiedEvent.SendMRUKEvent();
             }
 

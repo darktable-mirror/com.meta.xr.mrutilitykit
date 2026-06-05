@@ -28,6 +28,7 @@ namespace Meta.XR.MRUtilityKit.SceneDecorator
     /// A mask that combines multiple other masks and adds their values together.
     /// </summary>
     [Feature(Feature.Scene)]
+    [Obsolete("SceneDecorator is deprecated and will be removed in a future version.")]
     public class CompositeMaskAdd : Mask2D
     {
         /// <summary>
