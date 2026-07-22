@@ -62,7 +62,7 @@ namespace Meta.XR.MRUtilityKit.BuildingBlocks
 
             if (_interactionPreset == InteractionPreset.PointAndPlaceWithController)
             {
-                var rayVisualizer = FindFirstObjectByType<VisualizeEnvRaycast>();
+                var rayVisualizer = FindAnyObjectByType<VisualizeEnvRaycast>();
                 var hasRaycastVisualizer = rayVisualizer != null;
                 if (!hasRaycastVisualizer)
                 {

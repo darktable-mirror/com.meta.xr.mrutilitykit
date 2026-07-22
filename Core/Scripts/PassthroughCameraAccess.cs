@@ -146,7 +146,7 @@ namespace Meta.XR
             }
             if (!_colorsBuffer.IsCreated)
             {
-                _colorsBuffer = new NativeArray<Color32>(CurrentResolution.x * CurrentResolution.y * 4, Allocator.Persistent);
+                _colorsBuffer = new NativeArray<Color32>(CurrentResolution.x * CurrentResolution.y, Allocator.Persistent);
             }
             AsyncGPUReadback.RequestIntoNativeArray(ref _colorsBuffer, _texture).WaitForCompletion();
             return _colorsBuffer;
@@ -191,11 +191,13 @@ namespace Meta.XR
 #if UNITY_EDITOR
                 if (Application.isEditor)
                 {
-                    return headset is OVRPlugin.SystemHeadset.Meta_Link_Quest_3 or OVRPlugin.SystemHeadset.Meta_Link_Quest_3S or OVRPlugin.SystemHeadset.None;
+                    return headset is OVRPlugin.SystemHeadset.Meta_Link_Quest_3 or OVRPlugin.SystemHeadset.Meta_Link_Quest_3S or OVRPlugin.SystemHeadset.None
+                    ;
                 }
 #endif
 
-                if (headset is not (OVRPlugin.SystemHeadset.Meta_Quest_3 or OVRPlugin.SystemHeadset.Meta_Quest_3S))
+                if (headset is not (OVRPlugin.SystemHeadset.Meta_Quest_3 or OVRPlugin.SystemHeadset.Meta_Quest_3S
+                ))
                 {
                     return false;
                 }

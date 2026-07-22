@@ -25,6 +25,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.InputSystem;
 using UnityEngine.TestTools.Utils;
 
 namespace Meta.XR.MRUtilityKit.Tests
@@ -59,7 +60,7 @@ namespace Meta.XR.MRUtilityKit.Tests
         private void Update()
         {
             // To create/update the expected referenced serialized resized mesh
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Keyboard.current?.spaceKey.wasPressedThisFrame == true)
             {
                 SerializeResizedMesh("resized_mesh_serialized");
             }

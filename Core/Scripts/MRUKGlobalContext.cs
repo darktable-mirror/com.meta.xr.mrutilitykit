@@ -48,7 +48,11 @@ namespace Meta.XR.MRUtilityKit
         {
             if (!_isQuitting)
             {
+#if UNITY_6000_4_OR_NEWER
+                Debug.LogError($"{nameof(MRUKGlobalContext)} with instance id {GetEntityId()} was destroyed manually, this will prevent MRUK from working correctly. Recreating {nameof(MRUKGlobalContext)}...");
+#else
                 Debug.LogError($"{nameof(MRUKGlobalContext)} with instance id {GetInstanceID()} was destroyed manually, this will prevent MRUK from working correctly. Recreating {nameof(MRUKGlobalContext)}...");
+#endif
                 CreateInstance();
             }
         }

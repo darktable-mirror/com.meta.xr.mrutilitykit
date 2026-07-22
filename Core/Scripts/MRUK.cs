@@ -53,7 +53,7 @@ namespace Meta.XR.MRUtilityKit
     public partial class MRUK : MonoBehaviour
     {
         /// <summary>
-        /// when interacting specifically with tops of volumes, this can be used to
+        /// When interacting specifically with tops of volumes, this can be used to
         /// specify where the return position should be aligned on the surface
         /// e.g. some apps  might want a position right in the center of the table (chess)
         /// for others, the edge may be more important (piano or pong)
@@ -968,7 +968,7 @@ namespace Meta.XR.MRUtilityKit
         /// Shares multiple MRUK rooms with a group. Note that there is a performance overhead in sharing more rooms than necessary.
         /// Consider sharing only the current room using <see cref="GetCurrentRoom"/> and <see cref="MRUKRoom.ShareRoomAsync"/>.
         /// </summary>
-        /// <param name="rooms">A collection of rooms to be shared.</param>
+        /// <param name="rooms">A collection of rooms to be shared. Null elements are skipped with a warning.</param>
         /// <param name="groupUuid">UUID of the group to which the room should be shared.</param>
         /// <returns>A task that tracks the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="rooms"/> is `null`.</exception>
@@ -997,6 +997,11 @@ namespace Meta.XR.MRUtilityKit
 
                 foreach (var room in rooms)
                 {
+                    if (room == null)
+                    {
+                        Debug.LogWarning($"{nameof(ShareRoomsAsync)}: Skipping null room. Ensure {nameof(GetCurrentRoom)}() is not null before adding to the rooms list.");
+                        continue;
+                    }
                     if (!room.IsLocal)
                     {
                         Debug.LogError($"Sharing JSON or Prefab rooms is not supported. Only rooms loaded from device ({nameof(MRUKRoom)}.{nameof(MRUKRoom.IsLocal)} == true) can be shared.");
@@ -1007,6 +1012,12 @@ namespace Meta.XR.MRUtilityKit
                         tasks.Add(sharable.SetEnabledAsync(true));
                     }
                     roomAnchors.Add(room.Anchor);
+                }
+
+                if (roomAnchors.Count == 0)
+                {
+                    Debug.LogError($"{nameof(ShareRoomsAsync)}: No valid rooms to share. All rooms in the list were null or invalid.");
+                    return OVRResult<OVRAnchor.ShareResult>.FromFailure(OVRAnchor.ShareResult.FailureOperationFailed);
                 }
 
                 await OVRTask.WhenAll(tasks);

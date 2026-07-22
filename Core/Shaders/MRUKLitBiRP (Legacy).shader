@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-Shader "Meta/MRUK/MixedReality/MRUKLit"
+Shader "Meta/MRUK/MixedReality/MRUKLitBiRP (Legacy)"
 {
     Properties
     {
@@ -63,62 +63,74 @@ Shader "Meta/MRUK/MixedReality/MRUKLit"
 
     SubShader
     {
-        Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" }
+        Tags { "Queue"="Geometry" "RenderType"="Opaque" }
+        LOD 200
+        ZWrite[_ZWrite]
+        Cull [_Cull]
 
-        UsePass "Universal Render Pipeline/Lit/ForwardLit"
-        //UsePass "Universal Render Pipeline/Lit/ShadowCaster" // This breaks in versions more chronologically recent than 6.0.58
-        Pass
+        CGPROGRAM
+
+        // physically based Standard lighting model,
+        // enable shadows on all light types
+        #pragma surface surf Standard fullforwardshadows addshadow
+
+        // shader model 3.0 target for nicer lighting
+        #pragma target 3.0
+
+        // the features we can toggle
+        #pragma shader_feature _GLOSSYREFLECTIONS_OFF
+        #pragma shader_feature _METALLICSPECGLOSSMAP
+        #pragma shader_feature _OCCLUSIONMAP
+        #pragma shader_feature _NORMALMAP
+        #pragma shader_feature _EMISSION
+
+        // accessing our properties
+        sampler2D _BaseMap;
+        sampler2D _BumpMap;
+        sampler2D _OcclusionMap;
+        sampler2D _EmissionMap;
+        sampler2D _MetallicGlossMap;
+        half _Smoothness;
+        half _Metallic;
+        fixed4 _BaseColor;
+        fixed4 _EmissionColor;
+        half _OcclusionStrength;
+
+        struct Input
         {
-            Name "ShadowCaster"
-            Tags
-            {
-                "LightMode" = "ShadowCaster"
-            }
+            float2 uv_BaseMap;
+        };
 
-            // -------------------------------------
-            // Render State Commands
-            ZWrite On
-            ZTest LEqual
-            ColorMask 0
-            Cull[_Cull]
+        void surf (Input IN, inout SurfaceOutputStandard o)
+        {
+            fixed4 c = tex2D (_BaseMap, IN.uv_BaseMap) * _BaseColor;
+            o.Albedo = c.rgb;
 
-            HLSLPROGRAM
-            #pragma target 2.0
+            half metallic = _Metallic;
+            half smoothness = _Smoothness;
+            #if _METALLICSPECGLOSSMAP
+            fixed4 metallicGloss = tex2D(_MetallicGlossMap, IN.uv_BaseMap);
+            metallic = metallicGloss.r;
+            smoothness *= metallicGloss.a;
+            #endif
+            o.Metallic = metallic;
+            o.Smoothness = smoothness;
 
-            // -------------------------------------
-            // Shader Stages
-            #pragma vertex ShadowPassVertex
-            #pragma fragment ShadowPassFragment
+            #if _NORMALMAP
+            fixed4 normal = tex2D(_BumpMap, IN.uv_BaseMap);
+            o.Normal = UnpackNormal(normal);
+            #endif
 
-            // -------------------------------------
-            // Material Keywords
-            #pragma shader_feature_local _ALPHATEST_ON
-            #pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+            #if _EMISSION
+            o.Emission = tex2D(_EmissionMap, IN.uv_BaseMap) * _EmissionColor;
+            #endif
 
-            //--------------------------------------
-            // GPU Instancing
-            #pragma multi_compile_instancing
-            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
-
-            // -------------------------------------
-            // Universal Pipeline keywords
-
-            // -------------------------------------
-            // Unity defined keywords
-            #pragma multi_compile _ LOD_FADE_CROSSFADE
-
-            // This is used during shadow map generation to differentiate between directional and punctual light shadows, as they use different formulas to apply Normal Bias
-            #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
-
-            // -------------------------------------
-            // Includes
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
-            ENDHLSL
+            #if _OCCLUSIONMAP
+            half ao = tex2D(_OcclusionMap, IN.uv_BaseMap).r;
+            o.Occlusion = lerp(1.0, ao, _OcclusionStrength);
+            #endif
         }
-        UsePass "Universal Render Pipeline/Lit/DepthOnly"
-        UsePass "Universal Render Pipeline/Lit/DepthNormals"
-        UsePass "Universal Render Pipeline/Lit/Meta"
+        ENDCG
     }
 
     CustomEditor "Oculus.ShaderGUI.MetaLit"

@@ -78,7 +78,11 @@ namespace Meta.XR
             }
             else
             {
+#if UNITY_6000_4_OR_NEWER
+                Debug.LogError($"More than one {nameof(EnvironmentRaycastManager)} component. Only one instance is allowed at a time. New instance: {name} ({GetEntityId()})", this);
+#else
                 Debug.LogError($"More than one {nameof(EnvironmentRaycastManager)} component. Only one instance is allowed at a time. New instance: {name} ({GetInstanceID()})", this);
+#endif
             }
         }
 

@@ -106,6 +106,7 @@ namespace Meta.XR.MRUtilityKit
         private bool _exportGlobalMeshJSON = true;
 
         private DebugAction? _currentDebugAction;
+        private bool _isSpaceSetupInProgress;
 
         private bool _shouldDisplayGlobalMesh;
 
@@ -422,15 +423,23 @@ namespace Meta.XR.MRUtilityKit
                 async () =>
                 {
                     _currentDebugAction = null;
+                    if (_isSpaceSetupInProgress)
+                    {
+                        Debug.LogWarning("MRUK: Space setup is already in progress, ignoring request.");
+                        return;
+                    }
+                    _isSpaceSetupInProgress = true;
                     var spaceCaptured = await OVRScene.RequestSpaceSetup();
                     if (!spaceCaptured)
                     {
+                        _isSpaceSetupInProgress = false;
                         return;
                     }
                     if (await MRUK.HasSceneModel())
                     {
                         await MRUK.Instance.LoadSceneFromDevice(false);
                     }
+                    _isSpaceSetupInProgress = false;
                 },
                 () => { },
                 () => { }

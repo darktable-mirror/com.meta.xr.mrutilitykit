@@ -40,7 +40,7 @@ namespace Meta.XR.MRUtilityKit.BuildingBlocks
 
         private void Awake()
         {
-            _raycastManager = FindFirstObjectByType<EnvironmentRaycastManager>();
+            _raycastManager = FindAnyObjectByType<EnvironmentRaycastManager>();
         }
 
         private void Update()

@@ -44,7 +44,7 @@ namespace Meta.XR.MRUtilityKit.BuildingBlocks
             _handGrabInteractable = GetComponentInChildren<HandGrabInteractable>();
             _grabInteractable = GetComponentInChildren<GrabInteractable>();
             _placeWithAnchor = GetComponent<PlaceWithAnchor>();
-            _cameraRig = FindFirstObjectByType<OVRCameraRig>();
+            _cameraRig = FindAnyObjectByType<OVRCameraRig>();
         }
 
         private void OnEnable()

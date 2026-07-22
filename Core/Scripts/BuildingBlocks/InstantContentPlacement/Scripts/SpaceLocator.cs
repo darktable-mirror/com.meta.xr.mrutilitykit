@@ -77,7 +77,7 @@ namespace Meta.XR.MRUtilityKit.BuildingBlocks
         private const float NormalConfidenceThreshold = 0.4f;
         private Vector3 _sizeToLocate;
 
-        private void Start() => _raycastManager = FindFirstObjectByType<EnvironmentRaycastManager>();
+        private void Start() => _raycastManager = FindAnyObjectByType<EnvironmentRaycastManager>();
 
         protected internal abstract Ray GetRaycastRay();
 

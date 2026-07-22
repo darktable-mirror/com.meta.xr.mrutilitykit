@@ -16,7 +16,8 @@
         "Meta.XR.Editor.Notifications",
         "Meta.XR.Editor.UserInterface",
         "Meta.XR.Editor.ToolingSupport",
-        "Meta.XR.Editor.Settings"
+        "Meta.XR.Editor.Settings",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [

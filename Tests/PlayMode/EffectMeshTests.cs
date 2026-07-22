@@ -407,7 +407,11 @@ namespace Meta.XR.MRUtilityKit.Tests
 
         private void DestroyAll<T>() where T : Component
         {
+#if UNITY_6000_4_OR_NEWER
+            var allObjects = Object.FindObjectsByType<T>(FindObjectsInactive.Include);
+#else
             var allObjects = Object.FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+#endif
             foreach (var obj in allObjects)
             {
                 Object.DestroyImmediate(obj.gameObject);

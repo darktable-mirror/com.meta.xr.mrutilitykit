@@ -128,14 +128,14 @@ namespace Meta.XR.MRUtilityKit.Tests
         public override IEnumerator SetUp()
         {
             yield return base.SetUp();
-            _effectMesh = Object.FindFirstObjectByType<EffectMesh>();
+            _effectMesh = Object.FindAnyObjectByType<EffectMesh>();
             RoomSetUp += (x, y) => { _effectMesh.CreateMesh(); };
             RoomTearDown += (x, y) =>
             {
                 _effectMesh.DestroyMesh();
                 _sceneNav.RemoveNavMeshData();
             };
-            _sceneNav = Object.FindFirstObjectByType<SceneNavigation>();
+            _sceneNav = Object.FindAnyObjectByType<SceneNavigation>();
         }
 
         [UnityTest]

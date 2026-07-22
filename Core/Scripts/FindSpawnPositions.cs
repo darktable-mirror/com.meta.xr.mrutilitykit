@@ -157,6 +157,12 @@ namespace Meta.XR.MRUtilityKit
         /// <param name="room">The room to spawn objects in.</param>
         public void StartSpawn(MRUKRoom room)
         {
+            if (room == null)
+            {
+                Debug.LogError("A valid room needs to be supplied when calling StartSpawn.");
+                return;
+            }
+
             var prefabBounds = Utilities.GetPrefabBounds(SpawnObject);
             var minRadius = 0.0f;
             const float clearanceDistance = 0.01f;
