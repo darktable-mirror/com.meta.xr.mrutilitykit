@@ -500,7 +500,7 @@ namespace Meta.XR.MRUtilityKit
         /// specific anchor has been removed
         /// </summary>
         /// <param name="anchorInfo">The anchor reference</param>
-        protected virtual void ClearPrefab(MRUKAnchor anchorInfo)
+        public virtual void ClearPrefab(MRUKAnchor anchorInfo)
         {
             if (!AnchorPrefabSpawnerObjects.ContainsKey(anchorInfo))
             {
@@ -515,7 +515,7 @@ namespace Meta.XR.MRUtilityKit
         /// <summary>
         /// Clears all the gameobjects created by this AnchorPrefabSpawner instance for all rooms.
         /// </summary>
-        protected virtual void ClearPrefabs()
+        public virtual void ClearPrefabs()
         {
             foreach (var kv in AnchorPrefabSpawnerObjects)
             {
