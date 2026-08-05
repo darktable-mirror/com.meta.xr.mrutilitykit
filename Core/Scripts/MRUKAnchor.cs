@@ -125,6 +125,15 @@ namespace Meta.XR.MRUtilityKit
         /// </summary>
         public Bounds? VolumeBounds { get; internal set; }
 
+        public Pose Pose
+        {
+            get
+            {
+                transform.GetPositionAndRotation(out var position, out var rotation);
+                return new Pose(position, rotation);
+            }
+        }
+
         /// <summary>
         /// A list of local-space points defining the boundary of the plane associated with the anchor.
         /// This is useful for any spatial calculations.
@@ -728,5 +737,10 @@ namespace Meta.XR.MRUtilityKit
         /// <see cref="OVRSemanticLabels.DeprecationMessage" />
         [Obsolete("Use '" + nameof(Label) + "' instead.")]
         public SceneLabels GetLabelsAsEnum() => Label;
+
+        public void ForceLoadGlobalMeshTriangles()
+        {
+            GlobalMesh = LoadGlobalMeshTriangles();
+        }
     }
 }
