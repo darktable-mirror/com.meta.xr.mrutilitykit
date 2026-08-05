@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using Meta.XR.MRUtilityKit.Extensions;
 using Meta.XR.Telemetry;
 using Meta.XR.Util;
 using Unity.Collections;
@@ -125,6 +126,8 @@ namespace Meta.XR.MRUtilityKit
         /// </summary>
         public Bounds? VolumeBounds { get; internal set; }
 
+        public Guid Uuid => Anchor.Uuid;
+
         /// <summary>
         /// A list of local-space points defining the boundary of the plane associated with the anchor.
         /// This is useful for any spatial calculations.
@@ -224,6 +227,10 @@ namespace Meta.XR.MRUtilityKit
         [field: SerializeField]
         private Mesh _mesh;
 
+        private void Start()
+        {
+            name += $" {Uuid.PrefixString(4)}";
+        }
 
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
         private void Update()

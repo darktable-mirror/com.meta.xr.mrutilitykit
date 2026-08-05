@@ -103,6 +103,8 @@ namespace Meta.XR.MRUtilityKit
         /// </summary>
         public OVRAnchor Anchor { get; internal set; } = OVRAnchor.Null;
 
+        public Guid Uuid => Anchor.Uuid;
+
         /// <summary>
         ///     A room is considered local if it was loaded from device. If it was loaded from some other source,
         ///     e.g. JSON or Prefab then it is not local.

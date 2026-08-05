@@ -25,6 +25,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using AOT;
+using Meta.XR.MRUtilityKit.Extensions;
 using Unity.Collections;
 using UnityEngine.Android;
 using UnityEngine.Assertions;
@@ -1038,7 +1039,7 @@ namespace Meta.XR.MRUtilityKit
             try
             {
                 var uuid = roomAnchor.uuid;
-                GameObject sceneRoom = new GameObject($"Room - {uuid}");
+                GameObject sceneRoom = new GameObject($"Room - {uuid.PrefixString(4)}");
                 MRUKRoom room = sceneRoom.AddComponent<MRUKRoom>();
                 room.Anchor = new OVRAnchor(roomAnchor.space, uuid);
                 UpdateRoomProperties(room, ref roomAnchor);
