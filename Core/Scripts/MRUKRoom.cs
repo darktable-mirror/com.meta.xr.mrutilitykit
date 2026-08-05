@@ -335,6 +335,11 @@ namespace Meta.XR.MRUtilityKit
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
         private void Update()
         {
+            if (!MRUK.Instance.EnableWorldLock)
+            {
+                return;
+            }
+
             if (transform.position != InitialPose.position ||
                 transform.rotation != InitialPose.rotation ||
                 transform.localScale != Vector3.one)
