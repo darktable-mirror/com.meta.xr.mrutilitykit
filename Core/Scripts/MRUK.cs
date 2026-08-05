@@ -571,7 +571,7 @@ namespace Meta.XR.MRUtilityKit
 
         private void Awake()
         {
-            if (OVRCameraRig.Instance == null)
+            if (OVRCameraRig.GetTrackingSpace() == null)
             {
                 Debug.LogError(nameof(OVRCameraRig) + " is not present, but MRUK requires it. Please add " + nameof(OVRCameraRig) + " to your scene via 'Meta / Tools / Building Blocks / Camera Rig'.");
             }

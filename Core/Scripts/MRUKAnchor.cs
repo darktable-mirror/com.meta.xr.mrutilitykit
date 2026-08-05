@@ -228,6 +228,11 @@ namespace Meta.XR.MRUtilityKit
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
         private void Update()
         {
+            if (!MRUK.Instance.EnableWorldLock)
+            {
+                return;
+            }
+
             var position = this is MRUKTrackable ? transform.localPosition : transform.position;
             var rotation = this is MRUKTrackable ? transform.localRotation : transform.rotation;
             if (position != InitialPose.position ||
