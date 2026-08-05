@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using Meta.XR.MRUtilityKit.Extensions;
 using Meta.XR.Telemetry;
 using Meta.XR.Util;
 using UnityEngine;
@@ -602,7 +603,7 @@ namespace Meta.XR.MRUtilityKit
             // Create a new instance of the prefab
             // We will translate location and scale differently depending on the label.
             var prefab = Instantiate(prefabToCreate, anchorInfo.transform);
-            prefab.name = string.Concat(prefabToCreate.name, Suffix);
+            prefab.name = string.Concat(prefabToCreate.name, $" {anchorInfo.Uuid.PrefixString(4)}");
             prefab.transform.parent = anchorInfo.transform;
 
             var prefabBounds = prefabGroup.IgnorePrefabSize ? null : Utilities.GetPrefabBounds(prefabToCreate);
