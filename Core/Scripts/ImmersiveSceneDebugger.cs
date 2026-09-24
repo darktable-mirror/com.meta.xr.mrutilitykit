@@ -293,6 +293,7 @@ namespace Meta.XR.MRUtilityKit
         private void OnDisable()
         {
             _currentDebugAction = null;
+            _isSpaceSetupInProgress = false;
         }
 
         private void IsPositionInRoom()
@@ -429,17 +430,25 @@ namespace Meta.XR.MRUtilityKit
                         return;
                     }
                     _isSpaceSetupInProgress = true;
-                    var spaceCaptured = await OVRScene.RequestSpaceSetup();
-                    if (!spaceCaptured)
+                    try
                     {
+                        var spaceCaptured = await OVRScene.RequestSpaceSetup();
+                        if (!spaceCaptured)
+                        {
+                            return;
+                        }
+                        if (await MRUK.HasSceneModel())
+                        {
+                            await MRUK.Instance.LoadSceneFromDevice(false);
+                        }
+                    }
+                    finally
+                    {
+                        // Reset on every exit path, including exceptions thrown by the
+                        // awaited calls above. Otherwise the flag stays true forever and
+                        // all later "Launch space setup" requests are wrongly rejected.
                         _isSpaceSetupInProgress = false;
-                        return;
                     }
-                    if (await MRUK.HasSceneModel())
-                    {
-                        await MRUK.Instance.LoadSceneFromDevice(false);
-                    }
-                    _isSpaceSetupInProgress = false;
                 },
                 () => { },
                 () => { }

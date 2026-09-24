@@ -191,6 +191,20 @@ namespace Meta.XR.MRUtilityKit
         /// </summary>
         public RoomMesh? RoomMeshData { get; internal set; }
 
+        /// <summary>
+        /// Whether this room was loaded as a High Fidelity (Scene 2.0) room.
+        /// </summary>
+        /// <remarks>
+        /// This is <c>true</c> when High Fidelity room data (room mesh / RoomPolygon) was found on the
+        /// device and loaded, and <c>false</c> when MRUK fell back to the legacy base (Scene 1.0) room
+        /// because no High Fidelity data was available — for example when
+        /// <see cref="MRUKSettings.EnableHighFidelityScene"/> is disabled, or the room was not captured
+        /// with High Fidelity data via Space Setup (Assisted Scene Capture), or the feature is not
+        /// enabled for the current account/device. Use this to detect the silent fallback to the base
+        /// scene instead of inferring it from <see cref="RoomMeshData"/> being <c>null</c>.
+        /// </remarks>
+        public bool IsHighFidelity => RoomMeshData != null;
+
 
         /// <summary>
         /// Represents a seat poses in the room, that exist only on <see cref="MRUKAnchor"/> labeled as COUCH.
@@ -353,11 +367,6 @@ namespace Meta.XR.MRUtilityKit
         /// <exception cref="ArgumentException">Thrown if <paramref name="groupUuid"/> is empty.</exception>
         public async OVRTask<OVRResult<OVRAnchor.ShareResult>> ShareRoomAsync(Guid groupUuid)
         {
-            if (MRUK.Instance.SceneSettings.EnableHighFidelityScene)
-            {
-                Debug.LogError(MRUK.MRUKSettings.HighFidelitySceneSharingError);
-                return OVRResult<OVRAnchor.ShareResult>.FromFailure(OVRAnchor.ShareResult.FailureUnsupported);
-            }
             if (Anchor == OVRAnchor.Null)
             {
                 throw new InvalidOperationException($"{nameof(Anchor)} must not be {nameof(OVRAnchor.Null)}");

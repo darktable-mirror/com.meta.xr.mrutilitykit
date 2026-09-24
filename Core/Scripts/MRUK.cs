@@ -232,7 +232,7 @@ namespace Meta.XR.MRUtilityKit
             /// </summary>
             V1,
             /// <summary>
-            /// The High Fidelity scene model which can contain multiple floors and ceilings at different heights.
+            /// [DISABLED] The High Fidelity scene model which can contain multiple floors and ceilings at different heights.
             /// Slanted ceilings and inner wall faces to represent pillars for example.
             /// </summary>
             V2,
@@ -523,12 +523,13 @@ namespace Meta.XR.MRUtilityKit
             [SerializeField, Tooltip("High Fidelity scene supports multiple floors, slanted ceilings, and inner walls.\n\n" +
                                      "This property only applies to Load Scene On Startup. When calling LoadSceneFromDevice() directly, you can choose the scene model on a per call basis.")]
             /// <summary>
-            /// High Fidelity scene supports multiple floors, slanted ceilings, and inner walls.
+            /// [DISABLED] High Fidelity scene supports multiple floors, slanted ceilings, and inner walls.
             /// This property only applies to Load Scene On Startup. When calling LoadSceneFromDevice() directly, you can choose the scene model on a per call basis.
             /// At the moment scene sharing is not supported for High Fidelity scene.
+            /// High Fidelity scene (V2) is currently disabled; this option has no effect and V1 will always be loaded.
             /// </summary>
+            [HighFidelitySceneDisabled]
             public bool EnableHighFidelityScene;
-            internal const string HighFidelitySceneSharingError = "High Fidelity scene doesn't support sharing. Please disable the '" + nameof(EnableHighFidelityScene) + "' setting to be able to share rooms.";
 
             [Space]
             [Header("Other settings")]
@@ -777,7 +778,8 @@ namespace Meta.XR.MRUtilityKit
                     var sceneModel = SceneModel.V1;
                     if (SceneSettings.EnableHighFidelityScene)
                     {
-                        sceneModel = SceneModel.V2FallbackV1;
+                        Debug.LogWarning("High Fidelity scene (V2) is currently disabled. " +
+                                         $"Ignoring {nameof(MRUKSettings.EnableHighFidelityScene)} and falling back to scene model V1.");
                     }
                     await LoadSceneFromDevice(sceneModel: sceneModel);
                 }
@@ -976,11 +978,6 @@ namespace Meta.XR.MRUtilityKit
         public async OVRTask<OVRResult<OVRAnchor.ShareResult>> ShareRoomsAsync(IEnumerable<MRUKRoom> rooms,
             Guid groupUuid)
         {
-            if (SceneSettings.EnableHighFidelityScene)
-            {
-                Debug.LogWarning(MRUKSettings.HighFidelitySceneSharingError);
-            }
-
             if (rooms == null)
             {
                 throw new ArgumentNullException(nameof(rooms));
@@ -1047,6 +1044,7 @@ namespace Meta.XR.MRUtilityKit
         /// </param>
         /// <param name="sceneModel">
         ///     Select which scene model to load from the device. V2 corresponds to High Fidelity scene and captures more details of the room.
+        ///     [Note] V2 is currently disabled and could be deprecated in the future. Will fallback to V1.
         /// </param>
         /// <returns>An enum indicating whether loading was successful or not.</returns>
         public async Task<LoadDeviceResult> LoadSceneFromDevice(bool requestSceneCaptureIfNoDataFound = true, bool removeMissingRooms = true, SceneModel sceneModel = SceneModel.V1)
@@ -1056,11 +1054,6 @@ namespace Meta.XR.MRUtilityKit
             bool requestSceneCaptureIfNoDataFound, bool removeMissingRooms, SceneModel sceneModel, SharedRoomsData? sharedRoomsData = null
         )
         {
-            if (sceneModel == SceneModel.V2 || sceneModel == SceneModel.V2FallbackV1)
-            {
-                var hifiUnifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.LoadHifiScene);
-                hifiUnifiedEvent.SendMRUKEvent();
-            }
             var result = await LoadSceneFromDeviceSharedLib(requestSceneCaptureIfNoDataFound, removeMissingRooms, sceneModel, sharedRoomsData);
             var unifiedEvent = new UnifiedEventData(TelemetryConstants.EventName.LoadSceneFromDevice);
             unifiedEvent.SetMetadata(TelemetryConstants.AnnotationType.NumRooms, Rooms.Count);

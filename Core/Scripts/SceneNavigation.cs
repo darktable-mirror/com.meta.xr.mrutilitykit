@@ -195,6 +195,14 @@ namespace Meta.XR.MRUtilityKit
         [Tooltip(
             "Specifies the tile size for the NavMesh if OverrideTileSize is enabled. Represents the width and height of the square tiles in world units.")]
         public int TileSize = 256;
+
+        /// <summary>
+        /// Specifies the minimum region area for the NavMesh. Regions smaller than this will be removed.
+        /// </summary>
+        [Tooltip(
+            "Specifies the minimum region area for the NavMesh. Regions smaller than this will be removed.")]
+        public float MinRegionArea = 0.01f;
+
 #if UNITY_2022_3_OR_NEWER
         /// <summary>
         /// Enables the generation of off-mesh links in the NavMesh, allowing agents to navigate between disconnected mesh regions,
@@ -579,6 +587,7 @@ namespace Meta.XR.MRUtilityKit
             settings.agentSlope = agentMaxSlope;
             settings.agentClimb = agentClimb;
             settings.overrideVoxelSize = OverrideVoxelSize;
+            settings.minRegionArea = MinRegionArea;
             if (OverrideVoxelSize)
             {
                 settings.voxelSize = VoxelSize;
@@ -603,7 +612,7 @@ namespace Meta.XR.MRUtilityKit
                 _navMeshSurface = gameObject.AddComponent<NavMeshSurface>();
             }
 
-            _navMeshSurface.minRegionArea = 0.01f;
+            _navMeshSurface.minRegionArea = MinRegionArea;
             _navMeshSurface.voxelSize = VoxelSize;
 
             if (!UseSceneData)

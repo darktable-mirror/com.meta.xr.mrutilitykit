@@ -35,7 +35,7 @@ MonoBehaviour:
       GizmoType: 0
       ShowGizmoByDefault: 0
       Color: {r: 0, g: 0, b: 0, a: 0}
-      Tweakable: 1
+      Tweakable: 0
       Min: 0
       Max: 1
       Category: Meta MRUK Tools
@@ -50,7 +50,7 @@ MonoBehaviour:
       GizmoType: 0
       ShowGizmoByDefault: 0
       Color: {r: 0, g: 0, b: 0, a: 0}
-      Tweakable: 1
+      Tweakable: 0
       Min: 0
       Max: 1
       Category: Meta MRUK Tools
@@ -65,7 +65,7 @@ MonoBehaviour:
       GizmoType: 0
       ShowGizmoByDefault: 0
       Color: {r: 0, g: 0, b: 0, a: 0}
-      Tweakable: 1
+      Tweakable: 0
       Min: 0
       Max: 1
       Category: Meta MRUK Tools
@@ -80,7 +80,7 @@ MonoBehaviour:
       GizmoType: 0
       ShowGizmoByDefault: 0
       Color: {r: 0, g: 0, b: 0, a: 0}
-      Tweakable: 1
+      Tweakable: 0
       Min: 0
       Max: 1
       Category: Meta MRUK Tools
@@ -95,7 +95,7 @@ MonoBehaviour:
       GizmoType: 0
       ShowGizmoByDefault: 0
       Color: {r: 0, g: 0, b: 0, a: 0}
-      Tweakable: 1
+      Tweakable: 0
       Min: 0
       Max: 1
       Category: Meta MRUK Tools
@@ -110,7 +110,7 @@ MonoBehaviour:
       GizmoType: 0
       ShowGizmoByDefault: 0
       Color: {r: 0, g: 0, b: 0, a: 0}
-      Tweakable: 1
+      Tweakable: 0
       Min: 0
       Max: 1
       Category: Meta MRUK Tools
@@ -124,7 +124,7 @@ MonoBehaviour:
       GizmoType: 0
       ShowGizmoByDefault: 0
       Color: {r: 0, g: 0, b: 0, a: 0}
-      Tweakable: 1
+      Tweakable: 0
       Min: 0
       Max: 1
       Category: Meta MRUK Tools
@@ -139,7 +139,7 @@ MonoBehaviour:
       GizmoType: 0
       ShowGizmoByDefault: 0
       Color: {r: 0, g: 0, b: 0, a: 0}
-      Tweakable: 1
+      Tweakable: 0
       Min: 0
       Max: 1
       Category: Meta MRUK Tools
@@ -195,7 +195,7 @@ MonoBehaviour:
       GizmoType: 0
       ShowGizmoByDefault: 0
       Color: {r: 0, g: 0, b: 0, a: 0}
-      Tweakable: 1
+      Tweakable: 0
       Min: 0
       Max: 1
       Category: Meta MRUK Tools
@@ -238,7 +238,7 @@ MonoBehaviour:
       GizmoType: 0
       ShowGizmoByDefault: 0
       Color: {r: 0, g: 0, b: 0, a: 0}
-      Tweakable: 1
+      Tweakable: 0
       Min: 0
       Max: 1
       Category: Meta MRUK Tools
